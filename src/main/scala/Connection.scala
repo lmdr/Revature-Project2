@@ -2,6 +2,7 @@
 object Connection {
   def connect() : Unit = {
     println("connect()")
+    //System.setProperty("hadoop.home.dir", "C:\\hadoop")
   }
 
   def disconnect(): Unit = {
