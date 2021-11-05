@@ -1,4 +1,3 @@
-
 // Menu represents user menus
 object Menu {
   def display_welcome_message(): Unit = {
@@ -18,15 +17,14 @@ object Menu {
     println("         .    \\-/    .")
     println("            '  .  '\n")
     println("This tool loads presidential election data\nfrom 1976 to 2020 and finds trends in the data.\n")
-    println("Welcome! To use this application, please make a select from the main menu below.")
+    println("Welcome! To use this application, please make a select from the menu below.")
     println("================================================================================")
   }
 
   def display_main_menu(): Unit = {
-    println("display_main_menu()")
-
     var exit = false
     do {
+      println("display_main_menu()")
       println("(1) Admin Login...")
       println("(2) User Login...")
       println("(0) Exit\n")
@@ -39,13 +37,39 @@ object Menu {
         case "i" | "info" | "information" | "w" | "welcome" | "h" | "help" => Menu.display_welcome_message()
         case _ =>
           println("Error: unrecognized option. Please enter a valid option from the menu.")
-          println("================================================================================")
         }
     } while (!exit)
   }
 
   def display_admin_menu(): Unit = {
-    println("display_admin_menu()")
+    var exit = false
+    do {
+      println("display_admin_menu()")
+      println("(1) Get User List...")
+      println("(2) Create User...")
+      println("(3) Update User...")
+      println("(4) Delete User...")
+      println("(0) Exit\n")
+
+      val choice = scala.io.StdIn.readLine("Enter menu choice: ").trim().toLowerCase()
+      choice match {
+        case "1" | "g" | "get" | "user" | "users" | "list" | "get users" |
+             "user list" | "get user list" | "get users list" =>
+          User.read_user_list()
+        case "2" | "c" | "create" | "create user" =>
+          User.create_user()
+        case "3" | "u" | "up" | "update" | "update user" =>
+          User.update_user()
+        case "4" | "d" | "del" | "delete" | "delete user" =>
+          User.delete_user()
+        case "0" | "e" | "ex" | "exit" | "q" | "quit" =>
+          exit = true
+        case "i" | "info" | "information" | "w" | "welcome" | "h" | "help" =>
+          Menu.display_welcome_message()
+        case _ =>
+          println("Error: unrecognized option. Please enter a valid option from the menu.")
+      }
+    } while (!exit)
   }
 
   def display_user_menu(): Unit = {
