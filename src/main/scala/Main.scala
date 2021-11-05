@@ -1,5 +1,6 @@
 object Main {
   def main(args: Array[String]): Unit = {
-    println("Hello World")
+    Menu.display_welcome_message()
+    Menu.display_main_menu()
   }
 }
