@@ -36,7 +36,7 @@ object Menu {
         case "1" | "a" | "ad" | "admin" => Menu.display_admin_login_prompt()
         case "2" | "u" | "user" => Menu.display_user_login_prompt()
         case "0" | "e" | "ex" | "exit" | "q" | "quit" => exit = true
-        case "i" | "info" | "information" | "w" | "welcome" => Menu.display_welcome_message()
+        case "i" | "info" | "information" | "w" | "welcome" | "h" | "help" => Menu.display_welcome_message()
         case _ =>
           println("Error: unrecognized option. Please enter a valid option from the menu.")
           println("================================================================================")
