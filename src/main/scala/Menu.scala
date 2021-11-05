@@ -49,7 +49,7 @@ object Menu {
       println("(2) Create User...")
       println("(3) Update User...")
       println("(4) Delete User...")
-      println("(0) Exit\n")
+      println("(0) Logout\n")
 
       val choice = scala.io.StdIn.readLine("Enter menu choice: ").trim().toLowerCase()
       choice match {
@@ -73,7 +73,31 @@ object Menu {
   }
 
   def display_user_menu(): Unit = {
-    println("display_user_menu()")
+    var exit = false
+    do {
+      println("display_user_menu()")
+      println("(1) Set Year...")
+      println("(2) Set State...")
+      println("(3) Run Queries...")
+      println("(0) Logout\n")
+
+      val choice = scala.io.StdIn.readLine("Enter menu choice: ").trim().toLowerCase()
+      choice match {
+        case "1" | "sy" | "set y" | "y" | "yr" | "year" | "s year" | "set year" =>
+          Trend.set_year()
+        case "2" | "ss" | "set s" | "s" | "st" | "state" | "s state" | "set state" =>
+          Trend.set_state()
+        case "3" | "r" | "rq" | "run" | "run q" | "query" | "queries" |
+             "r query" | "r queries" | "run query" | "run queries" =>
+          Trend.run_queries()
+        case "0" | "e" | "ex" | "exit" | "q" | "quit" =>
+          exit = true
+        case "i" | "info" | "information" | "w" | "welcome" | "h" | "help" =>
+          Menu.display_welcome_message()
+        case _ =>
+          println("Error: unrecognized option. Please enter a valid option from the menu.")
+      }
+    } while (!exit)
   }
 
   def display_admin_login_prompt(): Unit = {
