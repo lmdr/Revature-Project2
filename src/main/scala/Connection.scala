@@ -14,6 +14,7 @@ object Connection {
       .enableHiveSupport()
       .getOrCreate()
     //_spark.sparkContext.setLogLevel("ERROR")
+    Connection.create_database()
   }
 
   def disconnect(): Unit = {
@@ -22,7 +23,13 @@ object Connection {
   }
 
   def get_connection(): org.apache.spark.sql.SparkSession = {
-    println("getConnection()")
+    println("get_connection()")
     _spark
+  }
+
+  def create_database(): Unit = {
+    _spark.sql("SHOW DATABASES").show()
+    _spark.sql("CREATE DATABASE IF NOT EXISTS project1")
+    _spark.sql("SHOW TABLES").show()
   }
 }
