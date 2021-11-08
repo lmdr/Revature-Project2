@@ -15,6 +15,7 @@ object Connection {
       .getOrCreate()
     //_spark.sparkContext.setLogLevel("ERROR")
     Connection.create_database()
+    Connection.create_user_table()
   }
 
   def disconnect(): Unit = {
@@ -30,6 +31,12 @@ object Connection {
   def create_database(): Unit = {
     _spark.sql("SHOW DATABASES").show()
     _spark.sql("CREATE DATABASE IF NOT EXISTS project1")
+    _spark.sql("USE project1")
     _spark.sql("SHOW TABLES").show()
+  }
+
+  def create_user_table(): Unit = {
+    _spark.sql("CREATE TABLE IF NOT EXISTS users(username VARCHAR(255), password VARCHAR(255), name VARCHAR(255), state VARCHAR(255), year INT, admin BOOLEAN) ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' STORED AS TEXTFILE")
+    _spark.sql("SELECT * FROM users").show()
   }
 }
