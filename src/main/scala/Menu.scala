@@ -62,7 +62,7 @@ object Menu {
           User.update_user()
         case "4" | "d" | "del" | "delete" | "delete user" =>
           User.delete_user()
-        case "0" | "e" | "ex" | "exit" | "q" | "quit" =>
+        case "0" | "e" | "ex" | "exit" | "q" | "quit" | "l" | "lo" | "log" | "out" | "logout" =>
           exit = true
         case "i" | "info" | "information" | "w" | "welcome" | "h" | "help" =>
           Menu.display_welcome_message()
@@ -90,7 +90,7 @@ object Menu {
         case "3" | "r" | "rq" | "run" | "run q" | "query" | "queries" |
              "r query" | "r queries" | "run query" | "run queries" =>
           Trend.run_queries()
-        case "0" | "e" | "ex" | "exit" | "q" | "quit" =>
+        case "0" | "e" | "ex" | "exit" | "q" | "quit" | "l" | "lo" | "log" | "out" | "logout" =>
           exit = true
         case "i" | "info" | "information" | "w" | "welcome" | "h" | "help" =>
           Menu.display_welcome_message()

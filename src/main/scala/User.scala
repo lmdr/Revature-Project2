@@ -2,6 +2,7 @@
 object User {
   def read_user_list(): Unit = {
     println("read_user_list()")
+    MySQLConnection.read_user_table()
   }
 
   def create_user(): Unit = {
