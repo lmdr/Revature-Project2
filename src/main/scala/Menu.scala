@@ -102,11 +102,61 @@ object Menu {
 
   def display_admin_login_prompt(): Unit = {
     println("display_admin_login_prompt()")
-    Menu.display_admin_menu()
+    val username = scala.io.StdIn.readLine("Enter your username: ").trim()
+    val password = scala.io.StdIn.readLine("Enter your password: ").trim()
+    if (!Connection.verify_login(username,password,true)) {
+      println("Error: could not log you in.")
+      val account_creation = scala.io.StdIn.readLine("Would you like to create an admin account with the information you provided? (yes/no): ").trim().toLowerCase()
+      account_creation match {
+        case "y" | "yes" =>
+          val name = scala.io.StdIn.readLine("Enter your name: ").trim()
+          Connection.create_user(username, password, name, true)
+          val login_now = scala.io.StdIn.readLine("Would you like to login now? (yes/no): ").trim().toLowerCase()
+          login_now match {
+            case "y" | "yes" =>
+              if (!Connection.verify_login(username,password,true)) {
+                println("Error: could not log you in.")
+              } else {
+                Menu.display_admin_menu()
+              }
+            case _ =>
+              println("Returning you to the main menu.")
+          }
+        case _ =>
+          println("Returning you to the main menu.")
+      }
+    } else {
+      Menu.display_admin_menu()
+    }
   }
 
   def display_user_login_prompt(): Unit = {
     println("display_user_login_prompt()")
-    Menu.display_user_menu()
+    val username = scala.io.StdIn.readLine("Enter your username: ").trim()
+    val password = scala.io.StdIn.readLine("Enter your password: ").trim()
+    if (!Connection.verify_login(username, password, false)) {
+      println("Error: could not log you in.")
+      val account_creation = scala.io.StdIn.readLine("Would you like to create an user account with the information you provided? (yes/no): ").trim().toLowerCase()
+      account_creation match {
+        case "y" | "yes" =>
+          val name = scala.io.StdIn.readLine("Enter your name: ").trim()
+          Connection.create_user(username, password, name, false)
+          val login_now = scala.io.StdIn.readLine("Would you like to login now? (yes/no): ").trim().toLowerCase()
+          login_now match {
+            case "y" | "yes" =>
+              if (!Connection.verify_login(username,password,false)) {
+                println("Error: could not log you in.")
+              } else {
+                Menu.display_user_menu()
+              }
+            case _ =>
+              println("Returning you to the main menu.")
+          }
+        case _ =>
+          println("Returning you to the main menu.")
+      }
+    } else {
+      Menu.display_user_menu()
+    }
   }
 }

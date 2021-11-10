@@ -38,6 +38,20 @@ object MySQLConnection {
     _statement.execute("CREATE TABLE IF NOT EXISTS users(username VARCHAR(255) NOT NULL PRIMARY KEY, password VARCHAR(255) NOT NULL, name VARCHAR(255) NOT NULL, state VARCHAR(255) NOT NULL, year INT, admin BOOLEAN NOT NULL)")
   }
 
+  def verify_login(username: String, password: String, admin: Boolean): Boolean = {
+    if (admin) {
+      _statement.execute(s"SELECT * FROM users WHERE username = '$username' AND password = '$password' AND admin = true")
+    } else {
+      _statement.execute(s"SELECT * FROM users WHERE username = '$username' AND password = '$password'")
+    }
+    val result = _statement.getResultSet
+    if(!result.next()) {
+      false
+    } else {
+      true
+    }
+  }
+
   def read_user_table(): Unit = {
     _statement.execute("SELECT * FROM users")
     val users = _statement.getResultSet

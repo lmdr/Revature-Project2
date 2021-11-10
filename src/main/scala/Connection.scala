@@ -12,6 +12,11 @@ object Connection {
     HiveConnection.disconnect()
   }
 
+  def verify_login(username: String, password: String, admin: Boolean): Boolean = {
+    println("verify_login()")
+    MySQLConnection.verify_login(username, password, admin)
+  }
+
   def read_user_table(): Unit = {
     println("read_user_table()")
     MySQLConnection.read_user_table()
