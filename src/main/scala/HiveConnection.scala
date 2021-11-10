@@ -14,7 +14,7 @@ object HiveConnection {
       .getOrCreate()
     _spark.sparkContext.setLogLevel("ERROR")
     HiveConnection.create_database()
-    HiveConnection.create_data_table()
+    //HiveConnection.create_data_table()
   }
 
   def disconnect(): Unit = {
@@ -115,7 +115,20 @@ object HiveConnection {
 
     // Query 5
     println("Query 5")
-
+    _spark.sql("WITH " +
+      "state_totals AS " +
+      "(SELECT year, state, candidate, party_simplified, candidate_votes, total_votes, ROW_NUMBER() OVER (PARTITION BY year, state ORDER BY candidate_votes DESC) AS row_number " +
+      "FROM data " +
+      "WHERE (party_simplified = 'DEMOCRAT' OR party_simplified = 'REPUBLICAN') AND NOT (candidate = 'OTHER' OR candidate = '') " +
+      "ORDER BY year, state, party_simplified), " +
+      "state_lag AS " +
+      "(SELECT year, state, candidate, party_simplified, LAG(party_simplified) OVER (PARTITION BY state ORDER BY year) AS lag_party " +
+      "FROM state_totals " +
+      "WHERE row_number = 1) " +
+      "SELECT year AS Year, candidate AS Name, state AS State, party_simplified AS Party, lag_party AS Previous_Party " +
+      "FROM state_lag " +
+      "WHERE NOT party_simplified = lag_party AND lag_party IS NOT NULL " +
+      "ORDER BY year, state").show(100)
 
     // Query 6
     println("Query 6")
