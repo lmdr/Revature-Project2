@@ -40,7 +40,7 @@ object MySQLConnection {
 
   def read_user_table(): Unit = {
     _statement.execute("SELECT * FROM users")
-    val users = _statement.getResultSet()
+    val users = _statement.getResultSet
     if (!users.next()) {
       println("No registered users.")
     } else {
