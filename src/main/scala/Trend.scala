@@ -25,5 +25,6 @@ object Trend {
 
   def run_queries(): Unit = {
     println("run_queries()")
+    Connection.run_data_queries()
   }
 }
