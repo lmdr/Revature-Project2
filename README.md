@@ -7,14 +7,17 @@ This application makes use of the following technologies:
 Technology | Version
 ---------- | -------
 Hadoop | 3.2
-Hive | 
+Hive | 3.1.2
+MySQL | 8.0.26
 Intellij IDEA (Community Edition) | 2021.2.3
 SBT | 1.5.5
 Scala | 2.12.15
 Spark | 3.2.0
 
 ### Run
-Fill in later
+Install the above technologies and clone the repository.
+
+In the project directory run the following:
 ```
-run
+sbt run
 ```
