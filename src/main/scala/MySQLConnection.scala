@@ -52,6 +52,16 @@ object MySQLConnection {
     }
   }
 
+  def is_username_available(username: String): Boolean = {
+    _statement.execute(s"SELECT * FROM users WHERE username = '$username'")
+    val users = _statement.getResultSet
+    if (!users.next()) {
+      true
+    } else {
+      false
+    }
+  }
+
   def read_user_table(): Unit = {
     _statement.execute("SELECT * FROM users")
     val users = _statement.getResultSet

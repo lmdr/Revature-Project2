@@ -17,6 +17,10 @@ object Connection {
     MySQLConnection.verify_login(username, password, admin)
   }
 
+  def is_username_available(username: String): Boolean = {
+    MySQLConnection.is_username_available(username)
+  }
+
   def read_user_table(): Unit = {
     println("read_user_table()")
     MySQLConnection.read_user_table()
