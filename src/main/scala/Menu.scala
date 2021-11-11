@@ -27,7 +27,7 @@ object Menu {
       println("================================================================================")
       println("(1) Admin Login...")
       println("(2) User Login...")
-      println("(0) Exit\n")
+      println("(0) Exit")
 
       val choice = scala.io.StdIn.readLine("[INPUT] Enter menu choice: ").trim().toLowerCase()
       choice match {
@@ -51,7 +51,7 @@ object Menu {
       println("(2) Create User...")
       println("(3) Update User...")
       println("(4) Delete User...")
-      println("(0) Logout\n")
+      println("(0) Logout")
 
       val choice = scala.io.StdIn.readLine("[INPUT] Enter menu choice: ").trim().toLowerCase()
       choice match {
@@ -86,7 +86,7 @@ object Menu {
       println("(4) Run Query 4...")
       println("(5) Run Query 5...")
       println("(6) Run Query 6...")
-      println("(0) Logout\n")
+      println("(0) Logout")
 
       val choice = scala.io.StdIn.readLine("[INPUT] Enter menu choice: ").trim().toLowerCase()
       choice match {
@@ -129,8 +129,7 @@ object Menu {
     println("[INFO] Admin Login...")
     val username = scala.io.StdIn.readLine("[INPUT] Enter your username: ").trim()
     val password = scala.io.StdIn.readLine("[INPUT] Enter your password: ").trim()
-    if (!Connection.verify_login(username,password,true)) {
-      println("[ERROR] Could not log you in.")
+    if (Connection.is_username_available(username)) {
       val account_creation = scala.io.StdIn.readLine("[INPUT] Would you like to create an admin account with the information you provided? (yes/no): ").trim().toLowerCase()
       account_creation match {
         case "y" | "yes" =>
@@ -139,9 +138,10 @@ object Menu {
           val login_now = scala.io.StdIn.readLine("[INPUT] Would you like to login now? (yes/no): ").trim().toLowerCase()
           login_now match {
             case "y" | "yes" =>
-              if (!Connection.verify_login(username,password,true)) {
+              if (!Connection.verify_login(username, password,true)) {
                 println("[ERROR] Could not log you in.")
               } else {
+                println("")
                 Menu.display_admin_menu()
               }
             case _ =>
@@ -151,7 +151,12 @@ object Menu {
           println("[INFO] Returning you to the main menu.")
       }
     } else {
-      Menu.display_admin_menu()
+      if (!Connection.verify_login(username, password,true)) {
+        println("[ERROR] Could not log you in.")
+      } else {
+        println("")
+        Menu.display_admin_menu()
+      }
     }
   }
 
@@ -159,8 +164,7 @@ object Menu {
     println("[INFO] User Login...")
     val username = scala.io.StdIn.readLine("[INPUT] Enter your username: ").trim()
     val password = scala.io.StdIn.readLine("[INPUT] Enter your password: ").trim()
-    if (!Connection.verify_login(username, password, false)) {
-      println("[ERROR] Could not log you in.")
+    if (Connection.is_username_available(username)) {
       val account_creation = scala.io.StdIn.readLine("[INPUT] Would you like to create an user account with the information you provided? (yes/no): ").trim().toLowerCase()
       account_creation match {
         case "y" | "yes" =>
@@ -169,9 +173,10 @@ object Menu {
           val login_now = scala.io.StdIn.readLine("[INPUT] Would you like to login now? (yes/no): ").trim().toLowerCase()
           login_now match {
             case "y" | "yes" =>
-              if (!Connection.verify_login(username,password,false)) {
+              if (!Connection.verify_login(username, password,false)) {
                 println("[ERROR] Could not log you in.")
               } else {
+                println("")
                 Menu.display_user_menu()
               }
             case _ =>
@@ -181,7 +186,12 @@ object Menu {
           println("[INFO] Returning you to the main menu.")
       }
     } else {
-      Menu.display_user_menu()
+      if (!Connection.verify_login(username, password, false)) {
+        println("[ERROR] Could not log you in.")
+      } else {
+        println("")
+        Menu.display_user_menu()
+      }
     }
   }
 }

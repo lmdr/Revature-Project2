@@ -41,16 +41,22 @@ object Connection {
   def run_data_query(query_number: Int): Unit = {
     query_number match {
       case 1 =>
+        println("[INFO] List all winners grouped by year, party.")
         HiveConnection.run_data_query_one()
       case 2 =>
+        println("[INFO] All instances where a nominee has won twice.")
         HiveConnection.run_data_query_two()
       case 3 =>
+        println("[INFO] All instances where the winner was from the same party as the previous winner.")
         HiveConnection.run_data_query_three()
       case 4 =>
+        println("[INFO] Election over election change of overall voter participation.")
         HiveConnection.run_data_query_four()
       case 5 =>
+        println("[INFO] All instances where a state has by popular vote switched party.")
         HiveConnection.run_data_query_five()
       case 6 =>
+        println("[INFO] Election over election change in voter participation by party.")
         HiveConnection.run_data_query_six()
       case _ =>
     }

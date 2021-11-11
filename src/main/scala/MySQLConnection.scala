@@ -68,12 +68,13 @@ object MySQLConnection {
     if (!users.next()) {
       println("[ERROR] No registered users.")
     } else {
-      println("username | password | name | admin")
+      println(f"${"username"}%-22s | ${"password"}%-22s | ${"name"}%-22s | admin")
+      println("-----------------------+------------------------+------------------------+------")
       do {
-        print(s"${users.getString("username")} | " +
-          s"${users.getString("password")} | " +
-          s"${users.getString("name")} | " +
-          s"${users.getBoolean("admin")}\n")
+        print(f"${users.getString("username")}%-22s | " +
+          f"${users.getString("password")}%-22s | " +
+          f"${users.getString("name")}%-22s | " +
+          f"${users.getBoolean("admin")}\n")
       } while (users.next())
     }
   }
