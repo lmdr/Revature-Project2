@@ -1,8 +1,7 @@
 // Menu represents user menus
 object Menu {
   def display_welcome_message(): Unit = {
-    println("display_welcome_message()")
-    println("US Presidential Election Analysis Tool\n")
+    println("[INFO] US Presidential Election Analysis Tool\n")
     println("      A     .  '  .     A")
     println("     / \\ '           ' / \\")
     println("    |   \\     ___     /   |")
@@ -16,42 +15,45 @@ object Menu {
     println("      .    /_-   -_\\    .")
     println("         .    \\-/    .")
     println("            '  .  '\n")
-    println("This tool loads presidential election data\nfrom 1976 to 2020 and finds trends in the data.\n")
-    println("Welcome! To use this application, please make a select from the menu below.")
+    println("[INFO] This tool loads presidential election data\nfrom 1976 to 2020 and finds trends in the data.\n")
+    println("[INFO] Welcome! To use this application, please make a select from the menu below.")
     println("================================================================================")
   }
 
   def display_main_menu(): Unit = {
     var exit = false
     do {
-      println("display_main_menu()")
+      println("[MENU] Main Menu")
+      println("================================================================================")
       println("(1) Admin Login...")
       println("(2) User Login...")
       println("(0) Exit\n")
 
-      val choice = scala.io.StdIn.readLine("Enter menu choice: ").trim().toLowerCase()
+      val choice = scala.io.StdIn.readLine("[INPUT] Enter menu choice: ").trim().toLowerCase()
       choice match {
         case "1" | "a" | "ad" | "admin" => Menu.display_admin_login_prompt()
         case "2" | "u" | "user" => Menu.display_user_login_prompt()
         case "0" | "e" | "ex" | "exit" | "q" | "quit" => exit = true
         case "i" | "info" | "information" | "w" | "welcome" | "h" | "help" => Menu.display_welcome_message()
         case _ =>
-          println("Error: unrecognized option. Please enter a valid option from the menu.")
+          println("[ERROR] Unrecognized option. Please enter a valid option from the menu.")
         }
+      println("")
     } while (!exit)
   }
 
   def display_admin_menu(): Unit = {
     var exit = false
     do {
-      println("display_admin_menu()")
+      println("[MENU] Admin Menu")
+      println("================================================================================")
       println("(1) Get User List...")
       println("(2) Create User...")
       println("(3) Update User...")
       println("(4) Delete User...")
       println("(0) Logout\n")
 
-      val choice = scala.io.StdIn.readLine("Enter menu choice: ").trim().toLowerCase()
+      val choice = scala.io.StdIn.readLine("[INPUT] Enter menu choice: ").trim().toLowerCase()
       choice match {
         case "1" | "g" | "get" | "user" | "users" | "list" | "get users" |
              "user list" | "get user list" | "get users list" =>
@@ -67,15 +69,17 @@ object Menu {
         case "i" | "info" | "information" | "w" | "welcome" | "h" | "help" =>
           Menu.display_welcome_message()
         case _ =>
-          println("Error: unrecognized option. Please enter a valid option from the menu.")
+          println("[ERROR] Unrecognized option. Please enter a valid option from the menu.")
       }
+      println("")
     } while (!exit)
   }
 
   def display_user_menu(): Unit = {
     var exit = false
     do {
-      println("display_user_menu()")
+      println("[MENU] User Menu")
+      println("================================================================================")
       println("(1) Run Query 1...")
       println("(2) Run Query 2...")
       println("(3) Run Query 3...")
@@ -84,7 +88,7 @@ object Menu {
       println("(6) Run Query 6...")
       println("(0) Logout\n")
 
-      val choice = scala.io.StdIn.readLine("Enter menu choice: ").trim().toLowerCase()
+      val choice = scala.io.StdIn.readLine("[INPUT] Enter menu choice: ").trim().toLowerCase()
       choice match {
         case "1" | "r1" | "q1" | "r 1" | "q 1" | "rq1" | "rq 1" | "r q1" | "r q 1" |
              "run1" | "run 1" | "run q1" | "run q 1" |
@@ -115,35 +119,36 @@ object Menu {
         case "i" | "info" | "information" | "w" | "welcome" | "h" | "help" =>
           Menu.display_welcome_message()
         case _ =>
-          println("Error: unrecognized option. Please enter a valid option from the menu.")
+          println("[ERROR] Unrecognized option. Please enter a valid option from the menu.")
       }
+      println("")
     } while (!exit)
   }
 
   def display_admin_login_prompt(): Unit = {
-    println("display_admin_login_prompt()")
-    val username = scala.io.StdIn.readLine("Enter your username: ").trim()
-    val password = scala.io.StdIn.readLine("Enter your password: ").trim()
+    println("[INFO] Admin Login...")
+    val username = scala.io.StdIn.readLine("[INPUT] Enter your username: ").trim()
+    val password = scala.io.StdIn.readLine("[INPUT] Enter your password: ").trim()
     if (!Connection.verify_login(username,password,true)) {
-      println("Error: could not log you in.")
-      val account_creation = scala.io.StdIn.readLine("Would you like to create an admin account with the information you provided? (yes/no): ").trim().toLowerCase()
+      println("[ERROR] Could not log you in.")
+      val account_creation = scala.io.StdIn.readLine("[INPUT] Would you like to create an admin account with the information you provided? (yes/no): ").trim().toLowerCase()
       account_creation match {
         case "y" | "yes" =>
-          val name = scala.io.StdIn.readLine("Enter your name: ").trim()
+          val name = scala.io.StdIn.readLine("[INPUT] Enter your name: ").trim()
           Connection.create_user(username, password, name, true)
-          val login_now = scala.io.StdIn.readLine("Would you like to login now? (yes/no): ").trim().toLowerCase()
+          val login_now = scala.io.StdIn.readLine("[INPUT] Would you like to login now? (yes/no): ").trim().toLowerCase()
           login_now match {
             case "y" | "yes" =>
               if (!Connection.verify_login(username,password,true)) {
-                println("Error: could not log you in.")
+                println("[ERROR] Could not log you in.")
               } else {
                 Menu.display_admin_menu()
               }
             case _ =>
-              println("Returning you to the main menu.")
+              println("[INFO] Returning you to the main menu.")
           }
         case _ =>
-          println("Returning you to the main menu.")
+          println("[INFO] Returning you to the main menu.")
       }
     } else {
       Menu.display_admin_menu()
@@ -151,29 +156,29 @@ object Menu {
   }
 
   def display_user_login_prompt(): Unit = {
-    println("display_user_login_prompt()")
-    val username = scala.io.StdIn.readLine("Enter your username: ").trim()
-    val password = scala.io.StdIn.readLine("Enter your password: ").trim()
+    println("[INFO] User Login...")
+    val username = scala.io.StdIn.readLine("[INPUT] Enter your username: ").trim()
+    val password = scala.io.StdIn.readLine("[INPUT] Enter your password: ").trim()
     if (!Connection.verify_login(username, password, false)) {
-      println("Error: could not log you in.")
-      val account_creation = scala.io.StdIn.readLine("Would you like to create an user account with the information you provided? (yes/no): ").trim().toLowerCase()
+      println("[ERROR] Could not log you in.")
+      val account_creation = scala.io.StdIn.readLine("[INPUT] Would you like to create an user account with the information you provided? (yes/no): ").trim().toLowerCase()
       account_creation match {
         case "y" | "yes" =>
-          val name = scala.io.StdIn.readLine("Enter your name: ").trim()
+          val name = scala.io.StdIn.readLine("[INPUT] Enter your name: ").trim()
           Connection.create_user(username, password, name, false)
-          val login_now = scala.io.StdIn.readLine("Would you like to login now? (yes/no): ").trim().toLowerCase()
+          val login_now = scala.io.StdIn.readLine("[INPUT] Would you like to login now? (yes/no): ").trim().toLowerCase()
           login_now match {
             case "y" | "yes" =>
               if (!Connection.verify_login(username,password,false)) {
-                println("Error: could not log you in.")
+                println("[ERROR] Could not log you in.")
               } else {
                 Menu.display_user_menu()
               }
             case _ =>
-              println("Returning you to the main menu.")
+              println("[INFO] Returning you to the main menu.")
           }
         case _ =>
-          println("Returning you to the main menu.")
+          println("[INFO] Returning you to the main menu.")
       }
     } else {
       Menu.display_user_menu()

@@ -18,10 +18,10 @@ object MySQLConnection {
     } catch {
       case timeout: java.sql.SQLTimeoutException =>
         timeout.printStackTrace()
-        println("Error: SQL Timeout")
+        println("[ERROR] SQL Timeout")
       case sql: java.sql.SQLException =>
         sql.printStackTrace()
-        println("Error: SQL")
+        println("[ERROR] SQL")
     }
   }
 
@@ -66,7 +66,7 @@ object MySQLConnection {
     _statement.execute("SELECT * FROM users")
     val users = _statement.getResultSet
     if (!users.next()) {
-      println("No registered users.")
+      println("[ERROR] No registered users.")
     } else {
       println("username | password | name | admin")
       do {
