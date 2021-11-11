@@ -14,7 +14,7 @@ object HiveConnection {
       .getOrCreate()
     _spark.sparkContext.setLogLevel("ERROR")
     HiveConnection.create_database()
-    //HiveConnection.create_data_table()
+    HiveConnection.create_data_table()
   }
 
   def disconnect(): Unit = {
@@ -132,6 +132,30 @@ object HiveConnection {
 
     // Query 6
     println("Query 6")
-
+    _spark.sql("WITH " +
+      "year_names AS " +
+      "(SELECT year, party_simplified, SUM(candidate_votes) AS candidate_votes, SUM(total_votes) AS total_votes " +
+      "FROM data " +
+      "WHERE (party_simplified = 'DEMOCRAT' OR party_simplified = 'REPUBLICAN') AND NOT (candidate = 'OTHER' OR candidate = '') " +
+      "GROUP BY year, party_simplified " +
+      "ORDER BY year, party_simplified), " +
+      "year_percent AS " +
+      "(SELECT year, party_simplified, candidate_votes / total_votes AS percent " +
+      "FROM year_names), " +
+      "year_lag AS " +
+      "(SELECT year, party_simplified, percent, LAG(percent) OVER (PARTITION BY party_simplified ORDER BY year) AS lag " +
+      "FROM year_percent), " +
+      "democrat_yoy AS " +
+      "(SELECT year, ROUND((percent - lag) / lag * 100, 3) AS YoY_Delta_Democrat " +
+      "FROM year_lag " +
+      "WHERE party_simplified = 'DEMOCRAT' AND party_simplified IS NOT NULL), " +
+      "republican_yoy AS " +
+      "(SELECT year, ROUND((percent - lag) / lag * 100, 3) AS YoY_Delta_Republican " +
+      "FROM year_lag " +
+      "WHERE party_simplified = 'REPUBLICAN' AND party_simplified IS NOT NULL) " +
+      "SELECT democrat_yoy.year AS Year, democrat_yoy.YoY_Delta_Democrat as YoY_Delta_Democrat, republican_yoy.YoY_Delta_Republican as YoY_Delta_Republican " +
+      "FROM democrat_yoy " +
+      "INNER JOIN republican_yoy ON democrat_yoy.year = republican_yoy.year " +
+      "WHERE YoY_Delta_Democrat IS NOT NULL").show()
   }
 }
