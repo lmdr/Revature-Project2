@@ -37,8 +37,22 @@ object Connection {
     MySQLConnection.delete_user(username)
   }
 
-  def run_data_queries(): Unit = {
+  def run_data_query(query_number: Int): Unit = {
     println("run_data_queries()")
-    HiveConnection.run_data_queries()
+    query_number match {
+      case 1 =>
+        HiveConnection.run_data_query_one()
+      case 2 =>
+        HiveConnection.run_data_query_two()
+      case 3 =>
+        HiveConnection.run_data_query_three()
+      case 4 =>
+        HiveConnection.run_data_query_four()
+      case 5 =>
+        HiveConnection.run_data_query_five()
+      case 6 =>
+        HiveConnection.run_data_query_six()
+      case _ =>
+    }
   }
 }

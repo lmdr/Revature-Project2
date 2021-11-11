@@ -8,8 +8,8 @@ Technology | Version
 ---------- | -------
 Hadoop | 3.2
 Hive | 3.1.2
-MySQL | 8.0.26
 Intellij IDEA (Community Edition) | 2021.2.3
+MySQL | 8.0.26
 SBT | 1.5.5
 Scala | 2.12.15
 Spark | 3.2.0

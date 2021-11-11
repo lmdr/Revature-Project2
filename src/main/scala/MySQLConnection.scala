@@ -35,7 +35,7 @@ object MySQLConnection {
   }
 
   private def create_user_table(): Unit = {
-    _statement.execute("CREATE TABLE IF NOT EXISTS users(username VARCHAR(255) NOT NULL PRIMARY KEY, password VARCHAR(255) NOT NULL, name VARCHAR(255) NOT NULL, state VARCHAR(255) NOT NULL, year INT, admin BOOLEAN NOT NULL)")
+    _statement.execute("CREATE TABLE IF NOT EXISTS users(username VARCHAR(255) NOT NULL PRIMARY KEY, password VARCHAR(255) NOT NULL, name VARCHAR(255) NOT NULL, admin BOOLEAN NOT NULL)")
   }
 
   def verify_login(username: String, password: String, admin: Boolean): Boolean = {
@@ -58,27 +58,25 @@ object MySQLConnection {
     if (!users.next()) {
       println("No registered users.")
     } else {
-      println("username | password | name | state | year | admin")
+      println("username | password | name | admin")
       do {
         print(s"${users.getString("username")} | " +
           s"${users.getString("password")} | " +
           s"${users.getString("name")} | " +
-          s"${users.getString("state")} | " +
-          s"${users.getInt("year")} | " +
           s"${users.getBoolean("admin")}\n")
       } while (users.next())
     }
   }
 
   def create_user(username: String, password: String, name: String, admin: Boolean): Boolean = {
-    _statement.execute(s"INSERT INTO users VALUES ('$username', '$password', '$name', null, null, $admin)")
+    _statement.execute(s"INSERT INTO users VALUES ('$username', '$password', '$name', $admin)")
   }
 
   def update_user(username: String, property: String, value: Any): Boolean = {
     property match {
-      case "password" | "name" | "state" =>
+      case "password" | "name" =>
         _statement.execute(s"UPDATE users SET $property = '$value' WHERE username = '$username'")
-      case "year" | "admin" =>
+      case "admin" =>
         _statement.execute(s"UPDATE users SET $property = $value WHERE username = '$username'")
       case _ =>
         false

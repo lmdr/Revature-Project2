@@ -76,20 +76,40 @@ object Menu {
     var exit = false
     do {
       println("display_user_menu()")
-      println("(1) Set Year...")
-      println("(2) Set State...")
-      println("(3) Run Queries...")
+      println("(1) Run Query 1...")
+      println("(2) Run Query 2...")
+      println("(3) Run Query 3...")
+      println("(4) Run Query 4...")
+      println("(5) Run Query 5...")
+      println("(6) Run Query 6...")
       println("(0) Logout\n")
 
       val choice = scala.io.StdIn.readLine("Enter menu choice: ").trim().toLowerCase()
       choice match {
-        case "1" | "sy" | "set y" | "y" | "yr" | "year" | "s year" | "set year" =>
-          Trend.set_year()
-        case "2" | "ss" | "set s" | "s" | "st" | "state" | "s state" | "set state" =>
-          Trend.set_state()
-        case "3" | "r" | "rq" | "run" | "run q" | "query" | "queries" |
-             "r query" | "r queries" | "run query" | "run queries" =>
-          Trend.run_queries()
+        case "1" | "r1" | "q1" | "r 1" | "q 1" | "rq1" | "rq 1" | "r q1" | "r q 1" |
+             "run1" | "run 1" | "run q1" | "run q 1" |
+             "r query1" | "r query 1" | "run query 1" =>
+          Trend.run_query(1)
+        case "2" | "r2" | "q2" | "r 2" | "q 2" | "rq2" | "rq 2" | "r q2" | "r q 2" |
+             "run2" | "run 2" | "run q2" | "run q 2" |
+             "r query2" | "r query 2" | "run query 2" =>
+          Trend.run_query(2)
+        case "3" | "r3" | "q3" | "r 3" | "q 3" | "rq3" | "rq 3" | "r q3" | "r q 3" |
+             "run3" | "run 3" | "run q3" | "run q 3" |
+             "r query3" | "r query 3" | "run query 3" =>
+          Trend.run_query(3)
+        case "4" | "r4" | "q4" | "r 4" | "q 4" | "rq4" | "rq 4" | "r q4" | "r q 4" |
+             "run4" | "run 4" | "run q4" | "run q 4" |
+             "r query4" | "r query 4" | "run query 4" =>
+          Trend.run_query(4)
+        case "5" | "r5" | "q5" | "r 5" | "q 5" | "rq5" | "rq 5" | "r q5" | "r q 5" |
+             "run5" | "run 5" | "run q5" | "run q 5" |
+             "r query5" | "r query 5" | "run query 5" =>
+          Trend.run_query(5)
+        case "6" | "r6" | "q6" | "r 6" | "q 6" | "rq6" | "rq 6" | "r q6" | "r q 6" |
+             "run6" | "run 6" | "run q6" | "run q 6" |
+             "r query6" | "r query 6" | "run query 6" =>
+          Trend.run_query(6)
         case "0" | "e" | "ex" | "exit" | "q" | "quit" | "l" | "lo" | "log" | "out" | "logout" =>
           exit = true
         case "i" | "info" | "information" | "w" | "welcome" | "h" | "help" =>

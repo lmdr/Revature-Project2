@@ -32,9 +32,7 @@ object HiveConnection {
     _spark.sql("LOAD DATA LOCAL INPATH 'Project1Data_SampleData.csv' INTO TABLE data")
   }
 
-  def run_data_queries(): Unit = {
-    // Query 1
-    println("Query 1")
+  def run_data_query_one(): Unit = {
     _spark.sql("WITH " +
       "year_sums AS " +
       "(SELECT year, candidate, party_simplified, SUM(candidate_votes) AS candidate_votes, SUM(total_votes) AS total_votes " +
@@ -48,10 +46,10 @@ object HiveConnection {
       "SELECT year AS Year, candidate AS Name, party_simplified AS Party, candidate_votes AS Votes, total_votes AS Total, ROUND(candidate_votes / total_votes * 100, 3) AS Percent " +
       "FROM year_votes " +
       "WHERE row_number = 1 " +
-    "ORDER BY party_simplified, year").show()
+      "ORDER BY party_simplified, year").show()
+  }
 
-    // Query 2
-    println("Query 2")
+  def run_data_query_two(): Unit = {
     _spark.sql("WITH " +
       "year_sums AS " +
       "(SELECT year, candidate, party_simplified, SUM(candidate_votes) AS candidate_votes, SUM(total_votes) AS total_votes " +
@@ -72,9 +70,9 @@ object HiveConnection {
       "SELECT candidate AS Name, party_simplified AS Party " +
       "FROM year_reelects " +
       "WHERE re_elected = 2").show()
+  }
 
-    // Query 3
-    println("Query 3")
+  def run_data_query_three(): Unit = {
     _spark.sql("WITH " +
       "year_sums AS " +
       "(SELECT year, candidate, party_simplified, SUM(candidate_votes) AS candidate_votes, SUM(total_votes) AS total_votes " +
@@ -92,9 +90,9 @@ object HiveConnection {
       "SELECT year AS Year, candidate AS Name, party_simplified AS Party, lag_year AS Previous_Year, lag_name AS Previous_Name, lag_party AS Previous_Party " +
       "FROM year_lag " +
       "WHERE party_simplified = lag_party").show()
+  }
 
-    // Query 4
-    println("Query 4")
+  def run_data_query_four(): Unit = {
     _spark.sql("WITH " +
       "state_totals AS " +
       "(SELECT year, state, FIRST(total_votes) AS state_total " +
@@ -112,9 +110,9 @@ object HiveConnection {
       "SELECT year AS Year, ROUND((year_total - lag_year) / lag_year * 100, 3) AS YoY_Delta " +
       "FROM year_lags " +
       "WHERE lag_year IS NOT NULL").show()
+  }
 
-    // Query 5
-    println("Query 5")
+  def run_data_query_five(): Unit = {
     _spark.sql("WITH " +
       "state_totals AS " +
       "(SELECT year, state, candidate, party_simplified, candidate_votes, total_votes, ROW_NUMBER() OVER (PARTITION BY year, state ORDER BY candidate_votes DESC) AS row_number " +
@@ -129,9 +127,9 @@ object HiveConnection {
       "FROM state_lag " +
       "WHERE NOT party_simplified = lag_party AND lag_party IS NOT NULL " +
       "ORDER BY year, state").show(100)
+  }
 
-    // Query 6
-    println("Query 6")
+  def run_data_query_six(): Unit = {
     _spark.sql("WITH " +
       "year_names AS " +
       "(SELECT year, party_simplified, SUM(candidate_votes) AS candidate_votes, SUM(total_votes) AS total_votes " +
