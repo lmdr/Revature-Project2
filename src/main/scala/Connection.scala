@@ -41,7 +41,7 @@ object Connection {
   def run_data_query(query_number: Int): Unit = {
     query_number match {
       case 1 =>
-        println("[INFO] List all winners grouped by year, party.")
+        println("[INFO] All winners grouped by party.")
         HiveConnection.run_data_query_one()
       case 2 =>
         println("[INFO] All instances where a nominee has won twice.")

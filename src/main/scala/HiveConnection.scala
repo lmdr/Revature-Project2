@@ -107,7 +107,7 @@ object HiveConnection {
       "year_lags AS " +
       "(SELECT *, LAG(year_total) OVER (ORDER BY year) AS lag_year " +
       "FROM year_totals) " +
-      "SELECT year AS Year, ROUND((year_total - lag_year) / lag_year * 100, 3) AS YoY_Delta " +
+      "SELECT year AS Year, ROUND((year_total - lag_year) / lag_year * 100, 3) AS EoE_Delta " +
       "FROM year_lags " +
       "WHERE lag_year IS NOT NULL").show()
   }
@@ -144,16 +144,62 @@ object HiveConnection {
       "(SELECT year, party_simplified, percent, LAG(percent) OVER (PARTITION BY party_simplified ORDER BY year) AS lag " +
       "FROM year_percent), " +
       "democrat_yoy AS " +
-      "(SELECT year, ROUND((percent - lag) / lag * 100, 3) AS YoY_Delta_Democrat " +
+      "(SELECT year, (percent - lag) / lag * 100 AS eoe_d_d " +
       "FROM year_lag " +
       "WHERE party_simplified = 'DEMOCRAT' AND party_simplified IS NOT NULL), " +
       "republican_yoy AS " +
-      "(SELECT year, ROUND((percent - lag) / lag * 100, 3) AS YoY_Delta_Republican " +
+      "(SELECT year, (percent - lag) / lag * 100 AS eoe_d_r " +
       "FROM year_lag " +
-      "WHERE party_simplified = 'REPUBLICAN' AND party_simplified IS NOT NULL) " +
-      "SELECT democrat_yoy.year AS Year, democrat_yoy.YoY_Delta_Democrat as YoY_Delta_Democrat, republican_yoy.YoY_Delta_Republican as YoY_Delta_Republican " +
+      "WHERE party_simplified = 'REPUBLICAN' AND party_simplified IS NOT NULL), " +
+      "eoe AS " +
+      "(SELECT democrat_yoy.year, democrat_yoy.eoe_d_d, republican_yoy.eoe_d_r " +
       "FROM democrat_yoy " +
       "INNER JOIN republican_yoy ON democrat_yoy.year = republican_yoy.year " +
-      "WHERE YoY_Delta_Democrat IS NOT NULL").show()
+      "WHERE eoe_d_d IS NOT NULL), " +
+      "select_1 AS " +
+      "(SELECT * " +
+      "FROM eoe " +
+      "ORDER BY year DESC " +
+      "LIMIT 3), " +
+      "eoe_1 AS " +
+      "(SELECT 2024 AS year, AVG(eoe_d_d) AS eoe_d_d, AVG(eoe_d_r) AS eoe_d_r " +
+      "FROM select_1), " +
+      "union_1 AS " +
+      "(SELECT * " +
+      "FROM eoe " +
+      "UNION " +
+      "SELECT * " +
+      "FROM eoe_1), " +
+      "select_2 AS " +
+      "(SELECT * " +
+      "FROM union_1 " +
+      "ORDER BY year DESC " +
+      "LIMIT 3), " +
+      "eoe_2 AS " +
+      "(SELECT 2028 AS year, AVG(eoe_d_d) AS eoe_d_d, AVG(eoe_d_r) AS eoe_d_r " +
+      "FROM select_2), " +
+      "union_2 AS " +
+      "(SELECT * " +
+      "FROM union_1 " +
+      "UNION " +
+      "SELECT * " +
+      "FROM eoe_2), " +
+      "select_3 AS " +
+      "(SELECT * " +
+      "FROM union_2 " +
+      "ORDER BY year DESC " +
+      "LIMIT 3), " +
+      "eoe_3 AS " +
+      "(SELECT 2032 AS year, AVG(eoe_d_d) AS eoe_d_d, AVG(eoe_d_r) AS eoe_d_r " +
+      "FROM select_3), " +
+      "union_3 AS " +
+      "(SELECT * " +
+      "FROM union_2 " +
+      "UNION " +
+      "SELECT * " +
+      "FROM eoe_3) " +
+      "SELECT year AS Year, ROUND(eoe_d_d, 3) AS EoE_Delta_Democrat, ROUND(eoe_d_r, 3) AS EoE_Delta_Republican " +
+      "FROM union_3 " +
+      "ORDER BY year").show()
   }
 }
