@@ -38,7 +38,6 @@ object Menu {
         case _ =>
           println("[ERROR] Unrecognized option. Please enter a valid option from the menu.")
         }
-      println("")
     } while (!exit)
   }
 
@@ -71,7 +70,6 @@ object Menu {
         case _ =>
           println("[ERROR] Unrecognized option. Please enter a valid option from the menu.")
       }
-      println("")
     } while (!exit)
   }
 
@@ -80,12 +78,12 @@ object Menu {
     do {
       println("[MENU] User Menu")
       println("================================================================================")
-      println("(1) Run Query 1...")
-      println("(2) Run Query 2...")
-      println("(3) Run Query 3...")
-      println("(4) Run Query 4...")
-      println("(5) Run Query 5...")
-      println("(6) Run Query 6...")
+      println("(1) Run Query 1... All winners grouped by party.")
+      println("(2) Run Query 2... All instances where a nominee has won twice.")
+      println("(3) Run Query 3... All instances where the winner was from the same party as the previous winner.")
+      println("(4) Run Query 4... Election over election change of overall voter participation.")
+      println("(5) Run Query 5... All instances where a state has by popular vote switched party.")
+      println("(6) Run Query 6... Election over election change in voter participation by party.")
       println("(0) Logout")
 
       val choice = scala.io.StdIn.readLine("[INPUT] Enter menu choice: ").trim().toLowerCase()
@@ -121,7 +119,6 @@ object Menu {
         case _ =>
           println("[ERROR] Unrecognized option. Please enter a valid option from the menu.")
       }
-      println("")
     } while (!exit)
   }
 
@@ -141,7 +138,6 @@ object Menu {
               if (!Connection.verify_login(username, password,true)) {
                 println("[ERROR] Could not log you in.")
               } else {
-                println("")
                 Menu.display_admin_menu()
               }
             case _ =>
@@ -154,7 +150,6 @@ object Menu {
       if (!Connection.verify_login(username, password,true)) {
         println("[ERROR] Could not log you in.")
       } else {
-        println("")
         Menu.display_admin_menu()
       }
     }
@@ -176,7 +171,6 @@ object Menu {
               if (!Connection.verify_login(username, password,false)) {
                 println("[ERROR] Could not log you in.")
               } else {
-                println("")
                 Menu.display_user_menu()
               }
             case _ =>
@@ -189,7 +183,6 @@ object Menu {
       if (!Connection.verify_login(username, password, false)) {
         println("[ERROR] Could not log you in.")
       } else {
-        println("")
         Menu.display_user_menu()
       }
     }
