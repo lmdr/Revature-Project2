@@ -1,3 +1,5 @@
+import java.io.File
+import org.apache.log4j.{Level, Logger}
 import org.apache.spark.sql.SparkSession
 
 // HiveConnection object represents SparkSession connection to Hive through Apache Spark
@@ -5,15 +7,23 @@ object HiveConnection {
   private var _spark: org.apache.spark.sql.SparkSession = _
 
   def connect() : Unit = {
+    // Set logger level to off
+    org.apache.log4j.Logger.getLogger("akka").setLevel(org.apache.log4j.Level.OFF)
+    org.apache.log4j.Logger.getLogger("hive").setLevel(org.apache.log4j.Level.OFF)
+    org.apache.log4j.Logger.getLogger("org").setLevel(org.apache.log4j.Level.OFF)
+
+    // Configure Apache Spark
     System.setProperty("hadoop.home.dir", "C:\\hadoop")
     _spark = org.apache.spark.sql.SparkSession
       .builder()
       .appName("Project 2")
       .config("spark.master", "local")
+      .config("spark.sql.warehouse.dir", new java.io.File("spark-warehouse").getAbsolutePath)
+      .config("hive.exec.dynamic.partition.mode", "nonstrict")
       .enableHiveSupport()
       .getOrCreate()
-    _spark.conf.set("hive.exec.dynamic.partition.mode", "nonstrict")
-    _spark.sparkContext.setLogLevel("ERROR")
+
+    // Set up Hive datastore for queries
     HiveConnection.create_database()
     HiveConnection.create_presidents_table()
     HiveConnection.create_representatives_table()
