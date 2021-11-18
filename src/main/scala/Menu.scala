@@ -73,6 +73,7 @@ object Menu {
     } while (!exit)
   }
 
+  // TODO DEPRECATED
   def display_user_menu(): Unit = {
     var exit = false
     do {

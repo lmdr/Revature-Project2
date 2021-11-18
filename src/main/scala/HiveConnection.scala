@@ -39,6 +39,7 @@ object HiveConnection {
     _spark.sql("USE project2")
   }
 
+  // TODO DEPRECATED
   private def create_data_table(): Unit = {
     _spark.sql("DROP TABLE IF EXISTS data")
     _spark.sql("CREATE TABLE IF NOT EXISTS data(year INT, state VARCHAR(255), state_po VARCHAR(2), state_fips INT, state_cen INT, state_ic INT, office VARCHAR(255), candidate VARCHAR(255), party_detailed VARCHAR(255), writein BOOLEAN, candidate_votes INT, total_votes INT, version INT, notes VARCHAR(255), party_simplified VARCHAR(255)) ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' STORED AS TEXTFILE")
@@ -191,6 +192,7 @@ object HiveConnection {
       "unofficial, version, party_simplified FROM senators")
   }
 
+  // TODO DEPRECATED
   def run_data_query_one(): Unit = {
     _spark.sql("WITH " +
       "year_sums AS " +
@@ -208,6 +210,7 @@ object HiveConnection {
       "ORDER BY party_simplified, year").show()
   }
 
+  // TODO DEPRECATED
   def run_data_query_two(): Unit = {
     _spark.sql("WITH " +
       "year_sums AS " +
@@ -231,6 +234,7 @@ object HiveConnection {
       "WHERE re_elected = 2").show()
   }
 
+  // TODO DEPRECATED
   def run_data_query_three(): Unit = {
     _spark.sql("WITH " +
       "year_sums AS " +
@@ -251,6 +255,7 @@ object HiveConnection {
       "WHERE party_simplified = lag_party").show()
   }
 
+  // TODO DEPRECATED
   def run_data_query_four(): Unit = {
     _spark.sql("WITH " +
       "state_totals AS " +
@@ -271,6 +276,7 @@ object HiveConnection {
       "WHERE lag_year IS NOT NULL").show()
   }
 
+  // TODO DEPRECATED
   def run_data_query_five(): Unit = {
     _spark.sql("WITH " +
       "state_totals AS " +
@@ -288,6 +294,7 @@ object HiveConnection {
       "ORDER BY year, state").show(100)
   }
 
+  // TODO DEPRECATED
   def run_data_query_six(): Unit = {
     _spark.sql("WITH " +
       "year_names AS " +

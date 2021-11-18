@@ -38,6 +38,7 @@ object Connection {
     MySQLConnection.delete_user(username)
   }
 
+  // TODO DEPRECATED
   def run_data_query(query_number: Int): Unit = {
     query_number match {
       case 1 =>
