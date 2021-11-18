@@ -8,13 +8,16 @@ object HiveConnection {
     System.setProperty("hadoop.home.dir", "C:\\hadoop")
     _spark = org.apache.spark.sql.SparkSession
       .builder()
-      .appName("Project 1")
+      .appName("Project 2")
       .config("spark.master", "local")
       .enableHiveSupport()
       .getOrCreate()
+    _spark.conf.set("hive.exec.dynamic.partition.mode", "nonstrict")
     _spark.sparkContext.setLogLevel("ERROR")
     HiveConnection.create_database()
-    HiveConnection.create_data_table()
+    HiveConnection.create_presidents_table()
+    HiveConnection.create_representatives_table()
+    HiveConnection.create_senators_table()
   }
 
   def disconnect(): Unit = {
@@ -22,14 +25,160 @@ object HiveConnection {
   }
 
   private def create_database(): Unit = {
-    _spark.sql("CREATE DATABASE IF NOT EXISTS project1")
-    _spark.sql("USE project1")
+    _spark.sql("CREATE DATABASE IF NOT EXISTS project2")
+    _spark.sql("USE project2")
   }
 
   private def create_data_table(): Unit = {
     _spark.sql("DROP TABLE IF EXISTS data")
     _spark.sql("CREATE TABLE IF NOT EXISTS data(year INT, state VARCHAR(255), state_po VARCHAR(2), state_fips INT, state_cen INT, state_ic INT, office VARCHAR(255), candidate VARCHAR(255), party_detailed VARCHAR(255), writein BOOLEAN, candidate_votes INT, total_votes INT, version INT, notes VARCHAR(255), party_simplified VARCHAR(255)) ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' STORED AS TEXTFILE")
     _spark.sql("LOAD DATA LOCAL INPATH 'input/Project2Data_USPresidents.csv' INTO TABLE data")
+  }
+
+  private def create_presidents_table(): Unit = {
+    _spark.sql("CREATE TABLE IF NOT EXISTS presidents_staging " +
+      "(year INT, state VARCHAR(255), state_po VARCHAR(2), state_fips INT, state_cen INT, state_ic INT, " +
+      "office VARCHAR(255), candidate VARCHAR(255), party_detailed VARCHAR(255), writein BOOLEAN, " +
+      "candidate_votes INT, total_votes INT, version INT, notes VARCHAR(255), party_simplified VARCHAR(255)) " +
+      "ROW FORMAT DELIMITED FIELDS TERMINATED BY ','")
+    _spark.sql("LOAD DATA LOCAL INPATH 'input/Project2Data_USPresidents.csv' INTO TABLE presidents_staging")
+    _spark.sql("DROP TABLE IF EXISTS presidents")
+    _spark.sql("CREATE TABLE IF NOT EXISTS presidents " +
+      "(state VARCHAR(255) COMMENT 'State name.', " +
+      "state_po VARCHAR(2) COMMENT 'U.S. postal code state abbreviation.', " +
+      "state_fips INT COMMENT 'State FIPS code.', " +
+      "state_cen INT COMMENT 'U.S. Census state code.', " +
+      "state_ic INT COMMENT 'ICPSR state code.', " +
+      "office VARCHAR(255) COMMENT 'U.S. PRESIDENT.', " +
+      "candidate VARCHAR(255) COMMENT 'Name of the candidate as it appears in the House Clerk report.', " +
+      "party_detailed VARCHAR(255) COMMENT 'Party of the candidate as it appears in the House Clerk report.', " +
+      "writein BOOLEAN COMMENT 'Whether votes are associated with a write-in candidates.', " +
+      "candidate_votes INT COMMENT 'Votes received by this candidate for this particular party.', " +
+      "total_votes INT COMMENT 'Total number of votes cast for this election.', " +
+      "version INT COMMENT 'Date on which dataset as finalized.', " +
+      "notes VARCHAR(255) COMMENT 'Additional notes.', " +
+      "party_simplified VARCHAR(255) COMMENT 'The entries will be one of: DEMOCRAT, REPUBLICAN, LIBERTARIAN, OTHER.') " +
+      "COMMENT 'The data file `1976-2016-president` contains constituency (state-level) returns for elections " +
+      "to the U.S. presidency from 1976 to 2016.  The data source is the document \"[Statistics of the Congressional " +
+      "Election](http://history.house.gov/Institution/Election-Statistics/Election-Statistics/),\" published " +
+      "biennially by the Clerk of the U.S. House of Representatives.' " +
+      "PARTITIONED BY (year INT COMMENT 'Year in which election was held.') " +
+      "ROW FORMAT DELIMITED FIELDS TERMINATED BY ','")
+    _spark.sql("INSERT OVERWRITE TABLE presidents PARTITION (year) " +
+      "SELECT state, state_po, state_fips, state_cen, state_ic, office, candidate, party_detailed, writein, " +
+      "candidate_votes, total_votes, version, notes, party_simplified, year FROM presidents_staging")
+    _spark.sql("DROP TABLE IF EXISTS presidents_staging")
+    _spark.sql("SELECT year, state, state_po, state_fips, state_cen, state_ic, office, candidate, " +
+      "party_detailed, writein, candidate_votes, total_votes, version, notes, party_simplified FROM presidents").cache()
+  }
+
+  private def create_representatives_table(): Unit = {
+    _spark.sql("CREATE TABLE IF NOT EXISTS representatives_staging " +
+      "(year INT, state VARCHAR(255), state_po VARCHAR(2), state_fips INT, state_cen INT, state_ic INT, " +
+      "office VARCHAR(255), district INT, stage VARCHAR(255), runoff BOOLEAN, special BOOLEAN, " +
+      "candidate VARCHAR(255), party_detailed VARCHAR(255), writein BOOLEAN, mode VARCHAR(255), " +
+      "candidate_votes INT, total_votes INT, unofficial BOOLEAN, version INT, fusion_ticket BOOLEAN) " +
+      "ROW FORMAT DELIMITED FIELDS TERMINATED BY ','")
+    _spark.sql("LOAD DATA LOCAL INPATH 'input/Project2Data_USRepresentatives.csv' " +
+      "INTO TABLE representatives_staging")
+    _spark.sql("DROP TABLE IF EXISTS representatives")
+    _spark.sql("CREATE TABLE IF NOT EXISTS representatives " +
+      "(state VARCHAR(255) COMMENT 'State name.', " +
+      "state_po VARCHAR(2) COMMENT 'U.S. postal code state abbreviation.', " +
+      "state_fips INT COMMENT 'State FIPS code.', " +
+      "state_cen INT COMMENT 'U.S. Census state code.', " +
+      "state_ic INT COMMENT 'ICPSR state code.', " +
+      "office VARCHAR(255) COMMENT 'U.S. House.', " +
+      "district INT COMMENT 'District number (at-large districts are coded as 0).', " +
+      "stage VARCHAR(255) COMMENT 'The entries will be one of: gen = general election, pri = primary election.', " +
+      "runoff BOOLEAN COMMENT 'Whether the election was a runoff.', " +
+      "special BOOLEAN COMMENT 'Whether election was a special election.', " +
+      "candidate VARCHAR(255) COMMENT 'Name of the candidate as it appears in the House Clerk report.', " +
+      "party_detailed VARCHAR(255) COMMENT 'Party of the candidate as it appears in the House Clerk report.', " +
+      "writein BOOLEAN COMMENT 'Whether votes are associated with a write-in candidates.', " +
+      "mode VARCHAR(255) COMMENT 'Mode of voting.', " +
+      "candidate_votes INT COMMENT 'Votes received by this candidate for this particular party.', " +
+      "total_votes INT COMMENT 'Total number of votes cast for this election.', " +
+      "unofficial BOOLEAN COMMENT 'Whether reported results are unofficial.', " +
+      "version INT COMMENT 'Date on which dataset as finalized.', " +
+      "fusion_ticket BOOLEAN COMMENT 'Whether the given candidate is running on a fusion party ticket, which " +
+      "will in turn mean that a candidate will appear multiple times, but by different parties.') " +
+      "COMMENT 'The data file `1976-2020-house` contains constituency (district) returns for elections to the " +
+      "U.S. House of Representatives from 1976 to 2020.  The data source is the document \"[Statistics of the " +
+      "Congressional Election](https://history.house.gov/Institution/Election-Statistics/),\" published " +
+      "biennially by the Clerk of the U.S. House of Representatives.'" +
+      "PARTITIONED BY (year INT COMMENT 'Year in which election was held.') " +
+      "ROW FORMAT DELIMITED FIELDS TERMINATED BY ','")
+    _spark.sql("INSERT OVERWRITE TABLE representatives PARTITION (year) " +
+      "SELECT state, state_po, state_fips, state_cen, state_ic, office, district, stage, runoff, special, candidate, " +
+      "party_detailed, writein, mode, candidate_votes, total_votes, unofficial, version, fusion_ticket, year " +
+      "FROM representatives_staging")
+    _spark.sql("DROP TABLE IF EXISTS representatives_staging")
+    _spark.sql("SELECT year, state, state_po, state_fips, state_ic, office, district, stage, runoff, special, " +
+      "candidate, party_detailed, writein, mode, candidate_votes, total_votes, unofficial, version, fusion_ticket " +
+      "FROM representatives").cache()
+  }
+
+  private def create_senators_table(): Unit = {
+    _spark.sql("CREATE TABLE IF NOT EXISTS senators_staging " +
+      "(year INT, state VARCHAR(255), state_po VARCHAR(2), state_fips INT, state_cen INT, state_ic INT, " +
+      "office VARCHAR(255), district VARCHAR(255), stage VARCHAR(255), special BOOLEAN, candidate VARCHAR(255), " +
+      "party_detailed VARCHAR(255), writein BOOLEAN, mode BOOLEAN, candidate_votes INT, total_votes INT, " +
+      "unofficial BOOLEAN, version INT, party_simplified VARCHAR(255)) " +
+      "ROW FORMAT DELIMITED FIELDS TERMINATED BY ','")
+    _spark.sql("LOAD DATA LOCAL INPATH 'input/Project2Data_USSenators.csv' INTO TABLE senators_staging")
+    _spark.sql("DROP TABLE IF EXISTS senators")
+    _spark.sql("CREATE TABLE IF NOT EXISTS senators " +
+      "(state VARCHAR(255) COMMENT 'State name.', " +
+      "state_po VARCHAR(2) COMMENT 'U.S. postal code state abbreviation.', " +
+      "state_fips INT COMMENT 'State FIPS code.', " +
+      "state_cen INT COMMENT 'U.S. Census state code.', " +
+      "state_ic INT COMMENT 'ICPSR state code.', " +
+      "office VARCHAR(255) COMMENT 'U.S. SENATE.', " +
+      "district VARCHAR(255) COMMENT 'Statewide.', " +
+      "stage VARCHAR(255) COMMENT 'The entries will be one of: " +
+      "gen = general election, runoff = runoff election, pri = primary election.', " +
+      "special BOOLEAN COMMENT 'Whether election was a special election.', " +
+      "candidate VARCHAR(255) COMMENT 'Name of the candidate as it appears in the House Clerk report.', " +
+      "party_detailed VARCHAR(255) COMMENT 'Party of the candidate as it appears in the House Clerk report.', " +
+      "writein BOOLEAN COMMENT 'Whether votes are associated with a write-in candidates.', " +
+      "mode VARCHAR(255) COMMENT 'Mode of voting.', " +
+      "candidate_votes INT COMMENT 'Votes received by this candidate for this particular party.', " +
+      "total_votes INT COMMENT 'Total number of votes cast for this election.', " +
+      "unofficial BOOLEAN COMMENT 'Whether reported results are unofficial.', " +
+      "version INT COMMENT 'Date on which dataset as finalized.', " +
+      "party_simplified VARCHAR(255) COMMENT 'The entries will be one of: DEMOCRAT, REPUBLICAN, LIBERTARIAN, OTHER') " +
+      "COMMENT 'The data file `1976-2018-senate` contains constituency (state-level) returns for elections " +
+      "to the U.S. Senate from 1976 to 2018.  The data source is the document \"[Statistics of the Congressional " +
+      "Election](http://history.house.gov/Institution/Election-Statistics/Election-Statistics/),\" published " +
+      "biennially by the Clerk of the U.S. House of Representatives.' " +
+      "PARTITIONED BY (year INT COMMENT 'Year in which election was held') " +
+      "ROW FORMAT DELIMITED FIELDS TERMINATED BY ','")
+    _spark.sql("INSERT OVERWRITE TABLE senators PARTITION (year) " +
+      "SELECT state, state_po, state_fips, state_cen, state_ic, office, district, stage, special, candidate, " +
+      "party_detailed, writein, mode, candidate_votes, total_votes, unofficial, version, party_simplified, year " +
+      "FROM senators_staging")
+    _spark.sql("DROP TABLE IF EXISTS senators_staging")
+    _spark.sql("SELECT year, state, state_po, state_fips, state_cen, state_ic, office, " +
+      "district, stage, special, candidate, party_detailed, writein, mode, candidate_votes, total_votes, " +
+      "unofficial, version, party_simplified FROM senators").cache()
+  }
+
+  def make_presidents_dataframe(): org.apache.spark.sql.DataFrame = {
+    _spark.sql("SELECT year, state, state_po, state_fips, state_cen, state_ic, office, candidate, " +
+      "party_detailed, writein, candidate_votes, total_votes, version, notes, party_simplified FROM presidents")
+  }
+
+  def make_representatives_dataframe(): org.apache.spark.sql.DataFrame = {
+    _spark.sql("SELECT year, state, state_po, state_fips, state_ic, office, district, stage, runoff, special, " +
+      "candidate, party_detailed, writein, mode, candidate_votes, total_votes, unofficial, version, fusion_ticket " +
+      "FROM representatives")
+  }
+
+  def make_senators_dataframe(): org.apache.spark.sql.DataFrame = {
+    _spark.sql("SELECT year, state, state_po, state_fips, state_cen, state_ic, office, " +
+      "district, stage, special, candidate, party_detailed, writein, mode, candidate_votes, total_votes, " +
+      "unofficial, version, party_simplified FROM senators")
   }
 
   def run_data_query_one(): Unit = {
