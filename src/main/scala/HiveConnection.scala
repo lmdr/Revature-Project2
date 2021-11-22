@@ -197,12 +197,15 @@ object HiveConnection {
   }*/
 
   def run_top_two_nominees_by_year(state: String): Unit = {
+    // Create windows
     val ranking_window = org.apache.spark.sql.expressions.Window
       .partitionBy("year")
       .orderBy(org.apache.spark.sql.functions.col("candidate_votes").desc)
     val ranking_window_representatives = org.apache.spark.sql.expressions.Window
       .partitionBy("year", "district")
       .orderBy(org.apache.spark.sql.functions.col("candidate_votes").desc)
+
+    // Create queries and display results
     HiveConnection.make_presidents_dataframe()
       .where(s"state = '$state'")
       .withColumn("ranking", org.apache.spark.sql.functions.row_number().over(ranking_window))
@@ -275,6 +278,31 @@ object HiveConnection {
     // Display results
     district_conversion.show(100)
     count_conversion.show(50)
+  }
+
+  def run_district_eoe_participation(state: String): Unit = {
+    // Create window
+    val lag_window = org.apache.spark.sql.expressions.Window
+      .partitionBy("district")
+      .orderBy("year")
+
+    // Create query
+    val participation = HiveConnection.make_representatives_dataframe()
+      .where(s"state = '$state'")
+      .groupBy("year", "district")
+      .agg(org.apache.spark.sql.functions.max("total_votes"))
+      .withColumn("lag_votes", org.apache.spark.sql.functions.lag("max(total_votes)", 1).over(lag_window))
+      .withColumn("eoe",
+        (org.apache.spark.sql.functions.col("max(total_votes)") -
+          org.apache.spark.sql.functions.col("lag_votes")) /
+          org.apache.spark.sql.functions.col("lag_votes") * 100)
+      .select("year", "district", "eoe")
+      .withColumnRenamed("year", "Year")
+      .withColumnRenamed("district", "District")
+      .withColumnRenamed("eoe", "EoE_Delta")
+
+    // Display results
+    participation.show(400)
   }
 
   // TODO DEPRECATED
