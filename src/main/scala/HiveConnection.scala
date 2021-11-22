@@ -245,6 +245,38 @@ object HiveConnection {
       .show(50)
   }
 
+  def run_district_conversions(state: String): Unit = {
+    // Create windows
+    val ranking_window = org.apache.spark.sql.expressions.Window
+      .partitionBy("year", "district")
+      .orderBy(org.apache.spark.sql.functions.col("candidate_votes").desc)
+    val lag_window = org.apache.spark.sql.expressions.Window
+      .partitionBy("district")
+      .orderBy("year")
+
+    // Create queries
+    val district_conversion = HiveConnection.make_representatives_dataframe()
+      .where(s"state = '$state'")
+      .withColumn("ranking", org.apache.spark.sql.functions.row_number().over(ranking_window))
+      .where("ranking = 1")
+      .withColumn("party_lag", org.apache.spark.sql.functions.lag("party_detailed", 1).over(lag_window))
+      .select("year", "district", "party_detailed", "party_lag")
+      .where("NOT party_detailed = party_lag")
+      .orderBy("year", "district")
+      .withColumnRenamed("year", "Year")
+      .withColumnRenamed("district", "District")
+      .withColumnRenamed("party_detailed", "Party")
+      .withColumnRenamed("party_lag", "Previous_Party")
+    val count_conversion = district_conversion
+      .groupBy("District")
+      .agg(org.apache.spark.sql.functions.count("District"))
+      .withColumnRenamed("count(District)", "Count_Conversions")
+
+    // Display results
+    district_conversion.show(100)
+    count_conversion.show(50)
+  }
+
   // TODO DEPRECATED
   def run_data_query_one(): Unit = {
     _spark.sql("WITH " +
