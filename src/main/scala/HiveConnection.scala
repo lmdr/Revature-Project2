@@ -192,6 +192,59 @@ object HiveConnection {
       "unofficial, version, party_simplified FROM senators")
   }
 
+  /*def is_valid_state(state: String): Boolean = {
+    HiveConnection.make_representatives_dataframe().col("state").contains((s"$state"))
+  }*/
+
+  def run_top_two_nominees_by_year(state: String): Unit = {
+    val ranking_window = org.apache.spark.sql.expressions.Window
+      .partitionBy("year")
+      .orderBy(org.apache.spark.sql.functions.col("candidate_votes").desc)
+    val ranking_window_representatives = org.apache.spark.sql.expressions.Window
+      .partitionBy("year", "district")
+      .orderBy(org.apache.spark.sql.functions.col("candidate_votes").desc)
+    HiveConnection.make_presidents_dataframe()
+      .where(s"state = '$state'")
+      .withColumn("ranking", org.apache.spark.sql.functions.row_number().over(ranking_window))
+      .where("ranking <= 2")
+      .withColumn("percent", org.apache.spark.sql.functions.col("candidate_votes") / org.apache.spark.sql.functions.col("total_votes") * 100)
+      .orderBy("year", "party_detailed")
+      .select("year", "office", "candidate", "party_detailed", "percent")
+      .withColumnRenamed("year", "Year")
+      .withColumnRenamed("office", "Office")
+      .withColumnRenamed("candidate", "Nominee")
+      .withColumnRenamed("party_detailed", "Party")
+      .withColumnRenamed("percent", "Percent")
+      .show(50)
+    HiveConnection.make_representatives_dataframe()
+      .where(s"state = '$state'")
+      .withColumn("ranking", org.apache.spark.sql.functions.row_number().over(ranking_window_representatives))
+      .where("ranking <= 2")
+      .withColumn("percent", org.apache.spark.sql.functions.col("candidate_votes") / org.apache.spark.sql.functions.col("total_votes") * 100)
+      .orderBy("year", "district", "party_detailed")
+      .select("year", "office", "district", "candidate", "party_detailed", "percent")
+      .withColumnRenamed("year", "Year")
+      .withColumnRenamed("office", "Office")
+      .withColumnRenamed("district", "District")
+      .withColumnRenamed("candidate", "Nominee")
+      .withColumnRenamed("party_detailed", "Party")
+      .withColumnRenamed("percent", "Percent")
+      .show(400)
+    HiveConnection.make_senators_dataframe()
+      .where(s"state = '$state'")
+      .withColumn("ranking", org.apache.spark.sql.functions.row_number().over(ranking_window))
+      .where("ranking <= 2")
+      .withColumn("percent", org.apache.spark.sql.functions.col("candidate_votes") / org.apache.spark.sql.functions.col("total_votes") * 100)
+      .orderBy("year", "party_detailed")
+      .select("year", "office", "candidate", "party_detailed", "percent")
+      .withColumnRenamed("year", "Year")
+      .withColumnRenamed("office", "Office")
+      .withColumnRenamed("candidate", "Nominee")
+      .withColumnRenamed("party_detailed", "Party")
+      .withColumnRenamed("percent", "Percent")
+      .show(50)
+  }
+
   // TODO DEPRECATED
   def run_data_query_one(): Unit = {
     _spark.sql("WITH " +
