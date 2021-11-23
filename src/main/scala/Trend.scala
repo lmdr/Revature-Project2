@@ -35,4 +35,8 @@ object Trend {
       Connection.run_district_eoe_participation(state)
     }
   }
+
+  def run_new_york_senators_party_sums(): Unit = {
+    Connection.run_new_york_senators_party_sums()
+  }
 }

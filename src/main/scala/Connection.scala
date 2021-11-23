@@ -85,4 +85,9 @@ object Connection {
     println(s"[INFO] Election over election change in overall voter participation in $state.")
     HiveConnection.run_district_eoe_participation(state)
   }
+
+  def run_new_york_senators_party_sums(): Unit = {
+    println("[INFO] Sum of votes received by all parties in New York.")
+    HiveConnection.run_new_york_senators_party_sums()
+  }
 }

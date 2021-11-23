@@ -17,12 +17,12 @@ object Menu {
     println("            '  .  '\n")
     println("[INFO] This tool loads presidential election data\nfrom 1976 to 2020 and finds trends in the data.\n")
     println("[INFO] Welcome! To use this application, please make a select from the menu below.")
-    println("================================================================================")
   }
 
   def display_main_menu(): Unit = {
     var exit = false
     do {
+      println("================================================================================")
       println("[MENU] Main Menu")
       println("================================================================================")
       println("(1) Admin Login...")
@@ -44,6 +44,7 @@ object Menu {
   def display_admin_menu(): Unit = {
     var exit = false
     do {
+      println("================================================================================")
       println("[MENU] Admin Menu")
       println("================================================================================")
       println("(1) Get User List...")
@@ -76,6 +77,7 @@ object Menu {
   def display_user_menu(): Unit = {
     var exit = false
     do {
+      println("================================================================================")
       println("[MENU] User Menu")
       println("================================================================================")
       println("(1) Project One Queries...")
@@ -101,6 +103,7 @@ object Menu {
   def display_user_menu_project_one(): Unit = {
     var exit = false
     do {
+      println("================================================================================")
       println("[MENU] Project One User Menu")
       println("================================================================================")
       println("(1) Run Query 1... All winners grouped by party.")
@@ -109,7 +112,7 @@ object Menu {
       println("(4) Run Query 4... Election over election change of overall voter participation.")
       println("(5) Run Query 5... All instances where a state has by popular vote switched party.")
       println("(6) Run Query 6... Election over election change in voter participation by party.")
-      println("(0) Logout")
+      println("(0) Return to User Menu")
 
       val choice = scala.io.StdIn.readLine("[INPUT] Enter menu choice: ").trim().toLowerCase()
       val query_one = "^(r|run)? ?(q|query)? ?(1|one)$".r
@@ -138,6 +141,7 @@ object Menu {
   def display_user_menu_project_two(): Unit = {
     var exit = false
     do {
+      println("================================================================================")
       println("[MENU] Project Two User Menu")
       println("================================================================================")
       println("(1) Run Query 1... Top two nominees (presidents, representatives, senators) by year.")
@@ -145,8 +149,8 @@ object Menu {
       println("(3) Run Query 3... Election over election change in district voter participation.")
       println("(4) Run Query 4... All presidential nominees not of Democrat or Republican parties.")
       println("(5) Run Query 5... PLACEHOLDER.") // TODO fill in other queries here
-      println("(6) Run Query 6... PLACEHOLDER.") // TODO fill in other queries here
-      println("(0) Logout")
+      println("(6) Run Query 6... Sum of votes received by all parties in New York.")
+      println("(0) Return to User Menu")
 
       val choice = scala.io.StdIn.readLine("[INPUT] Enter menu choice: ").trim().toLowerCase()
       val query_one = "^(r|run)? ?(q|query)? ?(1|one)$".r
@@ -161,7 +165,7 @@ object Menu {
         case query_three(_*) => Trend.run_district_eoe_participation()
         case query_four(_*) => Trend.run_alternative_presidential_nominees()
         case query_five(_*) => println("[INFO] PLACEHOLDER") // TODO fill in other queries here
-        case query_six(_*) => println("[INFO] PLACEHOLDER") // TODO fill in other queries here
+        case query_six(_*) => Trend.run_new_york_senators_party_sums()
         case "0" | "e" | "ex" | "exit" | "q" | "quit" | "l" | "lo" | "log" | "out" | "logout" =>
           exit = true
         case "i" | "info" | "information" | "w" | "welcome" | "h" | "help" =>

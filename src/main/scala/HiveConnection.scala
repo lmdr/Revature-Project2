@@ -1,6 +1,6 @@
 import java.io.File
 import org.apache.log4j.{Level, Logger}
-import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.{SQLContext, SparkSession}
 
 // HiveConnection object represents SparkSession connection to Hive through Apache Spark
 object HiveConnection {
@@ -556,6 +556,28 @@ object HiveConnection {
 
     // Display results
     participation.show(400)
+  }
+
+  // SQL, RDD, and DF Query
+  def run_new_york_senators_party_sums(): Unit = {
+    val US_Senators_DF = _spark.read.format("csv").option("header", true).load("input/Project2Data_USSenators.csv")
+    val NY_Senator_DF = US_Senators_DF.filter(US_Senators_DF("state") === "NEW YORK")
+
+    val party = _spark.sparkContext.parallelize(Seq("REPUBLICAN", "SOCIALIST WORKERS", "LIBERAL", "CONSERVATIVE", "LABOR" ,"" +
+      "COMMUNIST", "LIBERTARIAN", "DEMOCRAT", "FREE LIBERTARIAN", "RIGHT TO LIFE", "NEW ALLIANCE", "WORKERS WORLD", "INDEPENDENT PROGRESSIVE LINE", "" +
+      "NATURAL LAW", "INDEPENDENCE FUSION", "GREEN", "MARIJUANA REFORM", "CONSTITUTION", "INDEPENDENCE", "BUILDERS", "WORKING FAMILIES", "" +
+      "SOCIALIST EQUALITY", "RENT IS 2 DAMN HIGH", "TAX REVOLT", "ANTI-PROHIBITION", "COMMON SENSE", "REFORM", "WOMEN'S EQUALITY"))
+
+    // So we can use toDF()
+    val sqlContext = new org.apache.spark.sql.SQLContext(_spark.sparkContext)
+    import sqlContext.implicits._
+
+    val party_DF = party.toDF("Party")
+    party_DF.cache()
+    val records = party_DF.join(NY_Senator_DF, org.apache.spark.sql.functions.col("party_detailed") === org.apache.spark.sql.functions.col("Party"))
+    records.createOrReplaceTempView("records")
+    val final_DF = _spark.sql("SELECT SUM(candidatevotes), Party FROM records GROUP BY Party ORDER BY SUM(candidatevotes) DESC")
+    final_DF.show()
   }
   /* END PROJECT TWO QUERIES */
 }
