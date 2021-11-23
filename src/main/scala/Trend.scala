@@ -5,6 +5,10 @@ object Trend {
     Connection.run_data_query(query_number)
   }
 
+  def run_alternative_presidential_nominees(): Unit = {
+    Connection.run_alternative_presidential_nominees()
+  }
+
   def run_top_two_nominees_by_year(): Unit = {
     val state = scala.io.StdIn.readLine("[INPUT] Enter a state: ").trim().toUpperCase()
     // TODO preform validation on user input for state

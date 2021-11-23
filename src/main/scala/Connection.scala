@@ -62,6 +62,11 @@ object Connection {
     }
   }
 
+  def run_alternative_presidential_nominees(): Unit = {
+    println(s"[INFO] All presidential nominees not of Democrat or Republican parties.")
+    HiveConnection.run_alternative_presidential_nominees()
+  }
+
   def run_top_two_nominees_by_year(state: String): Unit = {
     println(s"[INFO] Top two nominees (presidents, representatives, senators) by year in $state.")
     HiveConnection.run_top_two_nominees_by_year(state)

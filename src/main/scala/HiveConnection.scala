@@ -34,6 +34,7 @@ object HiveConnection {
     _spark.stop()
   }
 
+  /* BEGIN DATA DEFINITION QUERIES */
   private def create_database(): Unit = {
     _spark.sql("CREATE DATABASE IF NOT EXISTS project2")
     _spark.sql("USE project2")
@@ -167,7 +168,9 @@ object HiveConnection {
       "district, stage, special, candidate, party_detailed, writein, mode, candidate_votes, total_votes, " +
       "unofficial, version, party_simplified FROM senators").cache()
   }
+  /* END DATA DEFINITION QUERIES */
 
+  /* BEGIN DF FACTORIES */
   def make_presidents_dataframe(): org.apache.spark.sql.DataFrame = {
     _spark.sql("SELECT year, state, state_po, state_fips, state_cen, state_ic, office, candidate, " +
       "party_detailed, writein, candidate_votes, total_votes, version, notes, party_simplified FROM presidents")
@@ -184,7 +187,9 @@ object HiveConnection {
       "district, stage, special, candidate, party_detailed, writein, mode, candidate_votes, total_votes, " +
       "unofficial, version, party_simplified FROM senators")
   }
+  /* END DF FACTORIES */
 
+  /* BEGIN PROJECT 1 QUERIES */
   def run_data_query_one(): Unit = {
     _spark.sql("WITH " +
       "year_sums AS " +
@@ -283,6 +288,7 @@ object HiveConnection {
   }
 
   def run_data_query_six(): Unit = {
+    // Could have used window frames to simplify moving average calculation for 2024, 2028, 2032 elections
     _spark.sql("WITH " +
       "year_names AS " +
       "(SELECT year, party_simplified, SUM(candidate_votes) AS candidate_votes, SUM(total_votes) AS total_votes " +
@@ -355,11 +361,91 @@ object HiveConnection {
       "FROM union_3 " +
       "ORDER BY year").show()
   }
+  /* END PROJECT 1 QUERIES */
 
-  /*def is_valid_state(state: String): Boolean = {
-    HiveConnection.make_representatives_dataframe().col("state").contains((s"$state"))
-  }*/
+  /*  BEGIN PROJECT 2 QUERIES */
+  // RDD
+  def run_alternative_presidential_nominees(): Unit = {
+    val rdd2 = _spark.sparkContext.textFile("input/Project2Data_USPresidents.csv")
+    rdd2.foreach(println)
 
+    println("*********TEST********************")
+
+    val states = rdd2.map(_.split(",")(2))
+
+    states.take(5) foreach(println)
+
+    val votes = rdd2.map(_.split(",")(11))
+
+    votes.take(5) foreach(println)
+
+    val stateVotes = rdd2.map{x => x.split(',')}.map{x => (x(0), x(2), x(11))}
+
+    val stateVotes2 = stateVotes.distinct()
+
+
+    val rdd4 = stateVotes2.filter(x => (x._1 contains "2020"))
+    rdd4.foreach(println)
+
+
+    println("*********FILTER********************")
+
+    // RDD Transformation - Filter
+
+    val filterRDD_GOP = rdd2.filter(x => !(x.contains("REPUBLICAN")))
+    val filterRDD_DemsAndGOP = filterRDD_GOP.filter(x => !(x.contains("DEMOCRAT")))
+
+
+    println("filter test")
+
+    filterRDD_DemsAndGOP.foreach(println)
+
+
+    // RDD Transformation - Union
+    println("******UNION!!!*********")
+    val filterUnion = filterRDD_GOP.union(filterRDD_DemsAndGOP)
+
+
+
+
+    //filterUnion.foreach(println)
+
+    /*
+    // RDD Transformation - Map
+    // Percentage of total votes by state (example)
+    val numbersRDD = sc.parallelize(List(1,2,3,4))
+    val squareNumbersRDD = numbersRDD.map(x => x*x).collect()
+    println("RDD Transformation - Map")
+    squareNumbersRDD.foreach(println)
+
+     */
+
+    // RDD Transformation - Map
+    // Percentage of total votes by state (example)
+    //val rdd4 = stateVotes2.filter(x => (x._1 contains "2020"))
+
+    val votesRDD = stateVotes2.map(x => (x._3))
+    println("RDD Transformation - Map (total votes)")
+
+    votesRDD.foreach(println)
+
+
+
+    // RDD Action - Collect
+    filterRDD_DemsAndGOP.collect()
+    println("Collect action:")
+    filterRDD_DemsAndGOP.foreach(println)
+
+    // RDD Action - Count
+    println("Count action:")
+    println(filterRDD_DemsAndGOP.count())
+  }
+
+  def is_valid_state(state: String): Boolean = {
+    !HiveConnection.make_representatives_dataframe().where(s"state = '$state'").limit(1).isEmpty
+  }
+
+  // SQL and DF Query
   def run_top_two_nominees_by_year(state: String): Unit = {
     // Create windows
     val ranking_window = org.apache.spark.sql.expressions.Window
@@ -412,6 +498,7 @@ object HiveConnection {
       .show(50)
   }
 
+  // SQL and DF Query
   def run_district_conversions(state: String): Unit = {
     // Create windows
     val ranking_window = org.apache.spark.sql.expressions.Window
@@ -444,6 +531,7 @@ object HiveConnection {
     count_conversion.show(50)
   }
 
+  // SQL and DF Query
   def run_district_eoe_participation(state: String): Unit = {
     // Create window
     val lag_window = org.apache.spark.sql.expressions.Window
@@ -468,4 +556,5 @@ object HiveConnection {
     // Display results
     participation.show(400)
   }
+  /* END PROJECT 2 QUERIES */
 }

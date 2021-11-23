@@ -142,8 +142,10 @@ object Menu {
       println("================================================================================")
       println("(1) Run Query 1... Top two nominees (presidents, representatives, senators) by year.")
       println("(2) Run Query 2... All instances a district has by popular vote switched party.")
-      println("(3) Run Query 3... Election over election change in overall voter participation.")
-      println("(4) Run Query 4... PLACEHOLDER.") // TODO fill in other queries here
+      println("(3) Run Query 3... Election over election change in district voter participation.")
+      println("(4) Run Query 4... All presidential nominees not of Democrat or Republican parties.")
+      println("(5) Run Query 5... PLACEHOLDER.") // TODO fill in other queries here
+      println("(6) Run Query 6... PLACEHOLDER.") // TODO fill in other queries here
       println("(0) Logout")
 
       val choice = scala.io.StdIn.readLine("[INPUT] Enter menu choice: ").trim().toLowerCase()
@@ -151,11 +153,15 @@ object Menu {
       val query_two = "^(r|run)? ?(q|query)? ?(2|two)$".r
       val query_three = "^(r|run)? ?(q|query)? ?(3|three)$".r
       val query_four = "^(r|run)? ?(q|query)? ?(4|four)$".r
+      val query_five = "^(r|run)? ?(q|query)? ?(5|five)$".r
+      val query_six = "^(r|run)? ?(q|query)? ?(6|six)$".r
       choice match {
         case query_one(_*) => Trend.run_top_two_nominees_by_year()
         case query_two(_*) => Trend.run_district_conversions()
         case query_three(_*) => Trend.run_district_eoe_participation()
-        case query_four(_*) => println("[INFO] PLACEHOLDER") // TODO fill in other queries here
+        case query_four(_*) => Trend.run_alternative_presidential_nominees()
+        case query_five(_*) => println("[INFO] PLACEHOLDER") // TODO fill in other queries here
+        case query_six(_*) => println("[INFO] PLACEHOLDER") // TODO fill in other queries here
         case "0" | "e" | "ex" | "exit" | "q" | "quit" | "l" | "lo" | "log" | "out" | "logout" =>
           exit = true
         case "i" | "info" | "information" | "w" | "welcome" | "h" | "help" =>
