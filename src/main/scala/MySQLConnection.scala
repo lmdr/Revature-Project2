@@ -30,8 +30,8 @@ object MySQLConnection {
   }
 
   private def create_database(): Unit = {
-    _statement.execute("CREATE DATABASE IF NOT EXISTS project1")
-    _statement.execute("USE project1")
+    _statement.execute("CREATE DATABASE IF NOT EXISTS project2")
+    _statement.execute("USE project2")
   }
 
   private def create_user_table(): Unit = {
