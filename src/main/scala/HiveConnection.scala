@@ -483,7 +483,7 @@ object HiveConnection {
       .withColumnRenamed("candidate", "Nominee")
       .withColumnRenamed("party_detailed", "Party")
       .withColumnRenamed("percent", "Percent")
-      .show(400)
+      .show(2544)
     HiveConnection.make_senators_dataframe()
       .where(s"state = '$state'")
       .withColumn("ranking", org.apache.spark.sql.functions.row_number().over(ranking_window))
