@@ -38,7 +38,6 @@ object Connection {
     MySQLConnection.delete_user(username)
   }
 
-  // TODO DEPRECATED
   def run_data_query(query_number: Int): Unit = {
     query_number match {
       case 1 =>
@@ -51,7 +50,7 @@ object Connection {
         println("[INFO] All instances where the winner was from the same party as the previous winner.")
         HiveConnection.run_data_query_three()
       case 4 =>
-        println("[INFO] Election over election change of overall voter participation.")
+        println("[INFO] Election over election change in overall voter participation.")
         HiveConnection.run_data_query_four()
       case 5 =>
         println("[INFO] All instances where a state has by popular vote switched party.")
@@ -61,5 +60,20 @@ object Connection {
         HiveConnection.run_data_query_six()
       case _ =>
     }
+  }
+
+  def run_top_two_nominees_by_year(state: String): Unit = {
+    println(s"[INFO] Top two nominees (presidents, representatives, senators) by year in $state.")
+    HiveConnection.run_top_two_nominees_by_year(state)
+  }
+
+  def run_district_conversions(state: String): Unit = {
+    println(s"[INFO] All instances a district has by popular vote switched party in $state.")
+    HiveConnection.run_district_conversions(state)
+  }
+
+  def run_district_eoe_participation(state: String): Unit = {
+    println(s"[INFO] Election over election change in overall voter participation in $state.")
+    HiveConnection.run_district_eoe_participation(state)
   }
 }
