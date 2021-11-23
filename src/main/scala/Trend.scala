@@ -11,19 +11,28 @@ object Trend {
 
   def run_top_two_nominees_by_year(): Unit = {
     val state = scala.io.StdIn.readLine("[INPUT] Enter a state: ").trim().toUpperCase()
-    // TODO preform validation on user input for state
-    Connection.run_top_two_nominees_by_year(state)
+    if (!Connection.is_valid_state(state)) {
+      println(s"[ERROR] $state is not valid.")
+    } else {
+      Connection.run_top_two_nominees_by_year(state)
+    }
   }
 
   def run_district_conversions(): Unit = {
     val state = scala.io.StdIn.readLine("[INPUT] Enter a state: ").trim().toUpperCase()
-    // TODO preform validation on user input for state
-    Connection.run_district_conversions(state)
+    if (!Connection.is_valid_state(state)) {
+      println(s"[ERROR] $state is not valid.")
+    } else {
+      Connection.run_district_conversions(state)
+    }
   }
 
   def run_district_eoe_participation(): Unit = {
     val state = scala.io.StdIn.readLine("[INPUT] Enter a state: ").trim().toUpperCase()
-    // TODO preform validation on user input for state
-    Connection.run_district_eoe_participation(state)
+    if (!Connection.is_valid_state(state)) {
+      println(s"[ERROR] $state is not valid.")
+    } else {
+      Connection.run_district_eoe_participation(state)
+    }
   }
 }

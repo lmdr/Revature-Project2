@@ -62,6 +62,10 @@ object Connection {
     }
   }
 
+  def is_valid_state(state: String): Boolean = {
+    HiveConnection.is_valid_state(state)
+  }
+
   def run_alternative_presidential_nominees(): Unit = {
     println(s"[INFO] All presidential nominees not of Democrat or Republican parties.")
     HiveConnection.run_alternative_presidential_nominees()

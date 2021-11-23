@@ -101,7 +101,7 @@ object Menu {
   def display_user_menu_project_one(): Unit = {
     var exit = false
     do {
-      println("[MENU] Project 1 User Menu")
+      println("[MENU] Project One User Menu")
       println("================================================================================")
       println("(1) Run Query 1... All winners grouped by party.")
       println("(2) Run Query 2... All instances where a nominee has won twice.")
@@ -138,7 +138,7 @@ object Menu {
   def display_user_menu_project_two(): Unit = {
     var exit = false
     do {
-      println("[MENU] Project 2 User Menu")
+      println("[MENU] Project Two User Menu")
       println("================================================================================")
       println("(1) Run Query 1... Top two nominees (presidents, representatives, senators) by year.")
       println("(2) Run Query 2... All instances a district has by popular vote switched party.")

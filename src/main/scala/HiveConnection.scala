@@ -189,7 +189,7 @@ object HiveConnection {
   }
   /* END DF FACTORIES */
 
-  /* BEGIN PROJECT 1 QUERIES */
+  /* BEGIN PROJECT ONE QUERIES */
   def run_data_query_one(): Unit = {
     _spark.sql("WITH " +
       "year_sums AS " +
@@ -361,9 +361,14 @@ object HiveConnection {
       "FROM union_3 " +
       "ORDER BY year").show()
   }
-  /* END PROJECT 1 QUERIES */
+  /* END PROJECT ONE QUERIES */
 
-  /*  BEGIN PROJECT 2 QUERIES */
+  /*  BEGIN PROJECT TWO QUERIES */
+  // Utility
+  def is_valid_state(state: String): Boolean = {
+    !HiveConnection.make_representatives_dataframe().where(s"state = '$state'").limit(1).isEmpty
+  }
+
   // RDD
   def run_alternative_presidential_nominees(): Unit = {
     val rdd2 = _spark.sparkContext.textFile("input/Project2Data_USPresidents.csv")
@@ -439,10 +444,6 @@ object HiveConnection {
     // RDD Action - Count
     println("Count action:")
     println(filterRDD_DemsAndGOP.count())
-  }
-
-  def is_valid_state(state: String): Boolean = {
-    !HiveConnection.make_representatives_dataframe().where(s"state = '$state'").limit(1).isEmpty
   }
 
   // SQL and DF Query
@@ -556,5 +557,5 @@ object HiveConnection {
     // Display results
     participation.show(400)
   }
-  /* END PROJECT 2 QUERIES */
+  /* END PROJECT TWO QUERIES */
 }
