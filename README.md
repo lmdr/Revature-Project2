@@ -1,6 +1,6 @@
-# Revature Project 2 : US Presidential Election Analysis: 1976 - 2020
+# Revature Project 2 : US Election Analysis: 1976 - 2020
 
-A command line interface application that interprets and displays statistics about the US Presidential election data available from 1976 to 2020. The application attempts to answer questions about trends in the data and offers predictions of what might happen in the future. The application was developed in Scala and utilizes the Spark API to interact with Apache Hive.
+A command line interface application that interprets and displays statistics about the US Presidential, Representative, and Senatorial election data available from 1976 to 2020. The application was developed in Scala and utilizes the Spark API to interact with Apache Hive.
 
 ### Technology Stack
 

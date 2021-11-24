@@ -36,11 +36,14 @@ object HiveConnection {
 
   /* BEGIN DATA DEFINITION QUERIES */
   private def create_database(): Unit = {
+    println("[INFO] Creating Hive data store.")
     _spark.sql("CREATE DATABASE IF NOT EXISTS project2")
     _spark.sql("USE project2")
+    println("[INFO] Created Hive data store.")
   }
 
   private def create_presidents_table(): Unit = {
+    println("[INFO] Creating presidents table.")
     _spark.sql("CREATE TABLE IF NOT EXISTS presidents_staging " +
       "(year INT, state VARCHAR(255), state_po VARCHAR(2), state_fips INT, state_cen INT, state_ic INT, " +
       "office VARCHAR(255), candidate VARCHAR(255), party_detailed VARCHAR(255), writein BOOLEAN, " +
@@ -57,14 +60,14 @@ object HiveConnection {
       "office VARCHAR(255) COMMENT 'U.S. PRESIDENT.', " +
       "candidate VARCHAR(255) COMMENT 'Name of the candidate as it appears in the House Clerk report.', " +
       "party_detailed VARCHAR(255) COMMENT 'Party of the candidate as it appears in the House Clerk report.', " +
-      "writein BOOLEAN COMMENT 'Whether votes are associated with a write-in candidates.', " +
+      "writein BOOLEAN COMMENT 'Whether votes are associated with a write-in candidate.', " +
       "candidate_votes INT COMMENT 'Votes received by this candidate for this particular party.', " +
       "total_votes INT COMMENT 'Total number of votes cast for this election.', " +
       "version INT COMMENT 'Date on which dataset as finalized.', " +
       "notes VARCHAR(255) COMMENT 'Additional notes.', " +
       "party_simplified VARCHAR(255) COMMENT 'The entries will be one of: DEMOCRAT, REPUBLICAN, LIBERTARIAN, OTHER.') " +
       "COMMENT 'The data file `1976-2016-president` contains constituency (state-level) returns for elections " +
-      "to the U.S. presidency from 1976 to 2016.  The data source is the document \"[Statistics of the Congressional " +
+      "to the U.S. presidency from 1976 to 2016. The data source is the document \"[Statistics of the Congressional " +
       "Election](http://history.house.gov/Institution/Election-Statistics/Election-Statistics/),\" published " +
       "biennially by the Clerk of the U.S. House of Representatives.' " +
       "PARTITIONED BY (year INT COMMENT 'Year in which election was held.') " +
@@ -75,9 +78,11 @@ object HiveConnection {
     _spark.sql("DROP TABLE IF EXISTS presidents_staging")
     _spark.sql("SELECT year, state, state_po, state_fips, state_cen, state_ic, office, candidate, " +
       "party_detailed, writein, candidate_votes, total_votes, version, notes, party_simplified FROM presidents").cache()
+    println("[INFO] Created presidents table.")
   }
 
   private def create_representatives_table(): Unit = {
+    println("[INFO] Creating representatives table.")
     _spark.sql("CREATE TABLE IF NOT EXISTS representatives_staging " +
       "(year INT, state VARCHAR(255), state_po VARCHAR(2), state_fips INT, state_cen INT, state_ic INT, " +
       "office VARCHAR(255), district INT, stage VARCHAR(255), runoff BOOLEAN, special BOOLEAN, " +
@@ -100,7 +105,7 @@ object HiveConnection {
       "special BOOLEAN COMMENT 'Whether election was a special election.', " +
       "candidate VARCHAR(255) COMMENT 'Name of the candidate as it appears in the House Clerk report.', " +
       "party_detailed VARCHAR(255) COMMENT 'Party of the candidate as it appears in the House Clerk report.', " +
-      "writein BOOLEAN COMMENT 'Whether votes are associated with a write-in candidates.', " +
+      "writein BOOLEAN COMMENT 'Whether votes are associated with a write-in candidate.', " +
       "mode VARCHAR(255) COMMENT 'Mode of voting.', " +
       "candidate_votes INT COMMENT 'Votes received by this candidate for this particular party.', " +
       "total_votes INT COMMENT 'Total number of votes cast for this election.', " +
@@ -109,7 +114,7 @@ object HiveConnection {
       "fusion_ticket BOOLEAN COMMENT 'Whether the given candidate is running on a fusion party ticket, which " +
       "will in turn mean that a candidate will appear multiple times, but by different parties.') " +
       "COMMENT 'The data file `1976-2020-house` contains constituency (district) returns for elections to the " +
-      "U.S. House of Representatives from 1976 to 2020.  The data source is the document \"[Statistics of the " +
+      "U.S. House of Representatives from 1976 to 2020. The data source is the document \"[Statistics of the " +
       "Congressional Election](https://history.house.gov/Institution/Election-Statistics/),\" published " +
       "biennially by the Clerk of the U.S. House of Representatives.'" +
       "PARTITIONED BY (year INT COMMENT 'Year in which election was held.') " +
@@ -122,9 +127,11 @@ object HiveConnection {
     _spark.sql("SELECT year, state, state_po, state_fips, state_ic, office, district, stage, runoff, special, " +
       "candidate, party_detailed, writein, mode, candidate_votes, total_votes, unofficial, version, fusion_ticket " +
       "FROM representatives").cache()
+    println("[INFO] Created representatives table.")
   }
 
   private def create_senators_table(): Unit = {
+    println("[INFO] Creating senators table.")
     _spark.sql("CREATE TABLE IF NOT EXISTS senators_staging " +
       "(year INT, state VARCHAR(255), state_po VARCHAR(2), state_fips INT, state_cen INT, state_ic INT, " +
       "office VARCHAR(255), district VARCHAR(255), stage VARCHAR(255), special BOOLEAN, candidate VARCHAR(255), " +
@@ -146,7 +153,7 @@ object HiveConnection {
       "special BOOLEAN COMMENT 'Whether election was a special election.', " +
       "candidate VARCHAR(255) COMMENT 'Name of the candidate as it appears in the House Clerk report.', " +
       "party_detailed VARCHAR(255) COMMENT 'Party of the candidate as it appears in the House Clerk report.', " +
-      "writein BOOLEAN COMMENT 'Whether votes are associated with a write-in candidates.', " +
+      "writein BOOLEAN COMMENT 'Whether votes are associated with a write-in candidate.', " +
       "mode VARCHAR(255) COMMENT 'Mode of voting.', " +
       "candidate_votes INT COMMENT 'Votes received by this candidate for this particular party.', " +
       "total_votes INT COMMENT 'Total number of votes cast for this election.', " +
@@ -154,7 +161,7 @@ object HiveConnection {
       "version INT COMMENT 'Date on which dataset as finalized.', " +
       "party_simplified VARCHAR(255) COMMENT 'The entries will be one of: DEMOCRAT, REPUBLICAN, LIBERTARIAN, OTHER') " +
       "COMMENT 'The data file `1976-2018-senate` contains constituency (state-level) returns for elections " +
-      "to the U.S. Senate from 1976 to 2018.  The data source is the document \"[Statistics of the Congressional " +
+      "to the U.S. Senate from 1976 to 2018. The data source is the document \"[Statistics of the Congressional " +
       "Election](http://history.house.gov/Institution/Election-Statistics/Election-Statistics/),\" published " +
       "biennially by the Clerk of the U.S. House of Representatives.' " +
       "PARTITIONED BY (year INT COMMENT 'Year in which election was held') " +
@@ -167,6 +174,7 @@ object HiveConnection {
     _spark.sql("SELECT year, state, state_po, state_fips, state_cen, state_ic, office, " +
       "district, stage, special, candidate, party_detailed, writein, mode, candidate_votes, total_votes, " +
       "unofficial, version, party_simplified FROM senators").cache()
+    println("[INFO] Created senators table.")
   }
   /* END DATA DEFINITION QUERIES */
 

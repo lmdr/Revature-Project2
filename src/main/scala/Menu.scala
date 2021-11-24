@@ -1,7 +1,7 @@
 // Menu represents user menus
 object Menu {
   def display_welcome_message(): Unit = {
-    println("[INFO] US Presidential Election Analysis Tool\n")
+    println("[INFO] US Election Analysis Tool\n")
     println("      A     .  '  .     A")
     println("     / \\ '           ' / \\")
     println("    |   \\     ___     /   |")
@@ -15,7 +15,7 @@ object Menu {
     println("      .    /_-   -_\\    .")
     println("         .    \\-/    .")
     println("            '  .  '\n")
-    println("[INFO] This tool loads presidential election data from 1976 to 2020 and finds trends in the data.\n")
+    println("[INFO] This tool loads election data from 1976 to 2020 and finds trends in the data.\n")
     println("[INFO] Welcome! To use this application, please make a select from the menu below.")
   }
 
