@@ -15,7 +15,8 @@ object Menu {
     println("      .    /_-   -_\\    .")
     println("         .    \\-/    .")
     println("            '  .  '\n")
-    println("[INFO] This tool loads election data from 1976 to 2020 and finds trends in the data.\n")
+    println("[INFO] This tool loads election data from 1976 to 2020 and finds trends in the data.")
+    println("[INFO] The election data used in this application comes from: https://electionlab.mit.edu/data\n")
     println("[INFO] Welcome! To use this application, please make a select from the menu below.")
   }
 
