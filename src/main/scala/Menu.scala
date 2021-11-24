@@ -15,16 +15,16 @@ object Menu {
     println("      .    /_-   -_\\    .")
     println("         .    \\-/    .")
     println("            '  .  '\n")
-    println("[INFO] This tool loads presidential election data\nfrom 1976 to 2020 and finds trends in the data.\n")
+    println("[INFO] This tool loads presidential election data from 1976 to 2020 and finds trends in the data.\n")
     println("[INFO] Welcome! To use this application, please make a select from the menu below.")
   }
 
   def display_main_menu(): Unit = {
     var exit = false
     do {
-      println("================================================================================")
+      println("====================================================================================================")
       println("[MENU] Main Menu")
-      println("================================================================================")
+      println("====================================================================================================")
       println("(1) Admin Login...")
       println("(2) User Login...")
       println("(0) Exit")
@@ -44,9 +44,9 @@ object Menu {
   def display_admin_menu(): Unit = {
     var exit = false
     do {
-      println("================================================================================")
+      println("====================================================================================================")
       println("[MENU] Admin Menu")
-      println("================================================================================")
+      println("====================================================================================================")
       println("(1) Get User List...")
       println("(2) Create User...")
       println("(3) Update User...")
@@ -77,9 +77,9 @@ object Menu {
   def display_user_menu(): Unit = {
     var exit = false
     do {
-      println("================================================================================")
+      println("====================================================================================================")
       println("[MENU] User Menu")
-      println("================================================================================")
+      println("====================================================================================================")
       println("(1) Project One Queries...")
       println("(2) Project Two Queries...")
       println("(0) Logout")
@@ -103,24 +103,18 @@ object Menu {
   def display_user_menu_project_one(): Unit = {
     var exit = false
     do {
-      println("================================================================================")
+      println("====================================================================================================")
       println("[MENU] Project One User Menu")
-      println("================================================================================")
-      println("(1) Run Query 1... All winners grouped by party.")
-      println("(2) Run Query 2... All instances where a nominee has won twice.")
-      println("(3) Run Query 3... All instances where the winner was from the same party as the previous winner.")
-      println("(4) Run Query 4... Election over election change of overall voter participation.")
-      println("(5) Run Query 5... All instances where a state has by popular vote switched party.")
-      println("(6) Run Query 6... Election over election change in voter participation by party.")
+      println("====================================================================================================")
+      val query_one = Utility.create_user_menu_option(1, "one", "All winners grouped by party.")
+      val query_two = Utility.create_user_menu_option(2, "two", "All instances where a nominee has won twice.")
+      val query_three = Utility.create_user_menu_option(3, "three", "All instances where the winner was from the same party as the previous winner.")
+      val query_four = Utility.create_user_menu_option(4, "four", "Election over election change in overall voter participation.")
+      val query_five = Utility.create_user_menu_option(5, "five", "All instances where a state has by popular vote switched party.")
+      val query_six = Utility.create_user_menu_option(6, "six", "Election over election change in voter participation by party.")
       println("(0) Return to User Menu")
 
       val choice = scala.io.StdIn.readLine("[INPUT] Enter menu choice: ").trim().toLowerCase()
-      val query_one = "^(r|run)? ?(q|query)? ?(1|one)$".r
-      val query_two = "^(r|run)? ?(q|query)? ?(2|two)$".r
-      val query_three = "^(r|run)? ?(q|query)? ?(3|three)$".r
-      val query_four = "^(r|run)? ?(q|query)? ?(4|four)$".r
-      val query_five = "^(r|run)? ?(q|query)? ?(5|five)$".r
-      val query_six = "^(r|run)? ?(q|query)? ?(6|six)$".r
       choice match {
         case query_one(_*) => Trend.run_query(1)
         case query_two(_*) => Trend.run_query(2)
@@ -141,24 +135,18 @@ object Menu {
   def display_user_menu_project_two(): Unit = {
     var exit = false
     do {
-      println("================================================================================")
+      println("====================================================================================================")
       println("[MENU] Project Two User Menu")
-      println("================================================================================")
-      println("(1) Run Query 1... Top two nominees (presidents, representatives, senators) by year.")
-      println("(2) Run Query 2... All instances a district has by popular vote switched party.")
-      println("(3) Run Query 3... Election over election change in district voter participation.")
-      println("(4) Run Query 4... Breakdown of the vote count, state by state, during the 2020 Presidential Election.")
-      println("(5) Run Query 5... All presidential nominees not of Democrat or Republican parties.")
-      println("(6) Run Query 6... Sum of votes received by all parties in New York.")
+      println("====================================================================================================")
+      val query_one = Utility.create_user_menu_option(1, "one", "Top two nominees (presidents, representatives, senators) by year.")
+      val query_two = Utility.create_user_menu_option(2, "two", "All instances a district has by popular vote switched party.")
+      val query_three = Utility.create_user_menu_option(3, "three", "Election over election change in district voter participation.")
+      val query_four = Utility.create_user_menu_option(4, "four", "Breakdown of the vote count, state by state, during the 2020 Presidential Election.")
+      val query_five = Utility.create_user_menu_option(5, "five", "All presidential nominees not of Democrat or Republican parties.")
+      val query_six = Utility.create_user_menu_option(6, "six", "Sum of votes received by all parties in New York.")
       println("(0) Return to User Menu")
 
       val choice = scala.io.StdIn.readLine("[INPUT] Enter menu choice: ").trim().toLowerCase()
-      val query_one = "^(r|run)? ?(q|query)? ?(1|one)$".r
-      val query_two = "^(r|run)? ?(q|query)? ?(2|two)$".r
-      val query_three = "^(r|run)? ?(q|query)? ?(3|three)$".r
-      val query_four = "^(r|run)? ?(q|query)? ?(4|four)$".r
-      val query_five = "^(r|run)? ?(q|query)? ?(5|five)$".r
-      val query_six = "^(r|run)? ?(q|query)? ?(6|six)$".r
       choice match {
         case query_one(_*) => Trend.run_top_two_nominees_by_year()
         case query_two(_*) => Trend.run_district_conversions()
