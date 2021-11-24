@@ -474,6 +474,7 @@ object HiveConnection {
     val count_conversion = district_conversion
       .groupBy("District")
       .agg(org.apache.spark.sql.functions.count("District"))
+      .orderBy(org.apache.spark.sql.functions.col("count(District)").desc, org.apache.spark.sql.functions.col("District"))
       .withColumnRenamed("count(District)", "Count_Conversions")
 
     // Display results
