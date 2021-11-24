@@ -21,7 +21,7 @@ object MySQLConnection {
         println("[ERROR] SQL Timeout")
       case sql: java.sql.SQLException =>
         sql.printStackTrace()
-        println("[ERROR] SQL")
+        println("[ERROR] SQL - Did you remember to set MYSQL_USER and MYSQL_PASSWORD environmental variables?")
     }
   }
 
