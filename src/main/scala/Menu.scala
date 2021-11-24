@@ -147,8 +147,8 @@ object Menu {
       println("(1) Run Query 1... Top two nominees (presidents, representatives, senators) by year.")
       println("(2) Run Query 2... All instances a district has by popular vote switched party.")
       println("(3) Run Query 3... Election over election change in district voter participation.")
-      println("(4) Run Query 4... All presidential nominees not of Democrat or Republican parties.")
-      println("(5) Run Query 5... PLACEHOLDER.") // TODO fill in other queries here
+      println("(4) Run Query 4... Breakdown of the vote count, state by state, during the 2020 Presidential Election.")
+      println("(5) Run Query 5... All presidential nominees not of Democrat or Republican parties.")
       println("(6) Run Query 6... Sum of votes received by all parties in New York.")
       println("(0) Return to User Menu")
 
@@ -163,8 +163,8 @@ object Menu {
         case query_one(_*) => Trend.run_top_two_nominees_by_year()
         case query_two(_*) => Trend.run_district_conversions()
         case query_three(_*) => Trend.run_district_eoe_participation()
-        case query_four(_*) => Trend.run_alternative_presidential_nominees()
-        case query_five(_*) => println("[INFO] PLACEHOLDER") // TODO fill in other queries here
+        case query_four(_*) => Trend.run_2020_presidential_vote_state_breakdown()
+        case query_five(_*) => Trend.run_alternative_presidential_nominees()
         case query_six(_*) => Trend.run_new_york_senators_party_sums()
         case "0" | "e" | "ex" | "exit" | "q" | "quit" | "l" | "lo" | "log" | "out" | "logout" =>
           exit = true

@@ -66,8 +66,13 @@ object Connection {
     HiveConnection.is_valid_state(state)
   }
 
+  def run_2020_presidential_vote_state_breakdown(): Unit = {
+    println("[INFO] Breakdown of the vote count, state by state, during the 2020 Presidential Election.")
+    HiveConnection.run_2020_presidential_vote_state_breakdown()
+  }
+
   def run_alternative_presidential_nominees(): Unit = {
-    println(s"[INFO] All presidential nominees not of Democrat or Republican parties.")
+    println("[INFO] All presidential nominees not of Democrat or Republican parties.")
     HiveConnection.run_alternative_presidential_nominees()
   }
 

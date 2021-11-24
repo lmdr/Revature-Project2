@@ -364,86 +364,35 @@ object HiveConnection {
   /* END PROJECT ONE QUERIES */
 
   /*  BEGIN PROJECT TWO QUERIES */
-  // Utility
+  // Utility function
   def is_valid_state(state: String): Boolean = {
     !HiveConnection.make_representatives_dataframe().where(s"state = '$state'").limit(1).isEmpty
   }
 
   // RDD
-  def run_alternative_presidential_nominees(): Unit = {
+  def run_2020_presidential_vote_state_breakdown(): Unit = {
     val rdd2 = _spark.sparkContext.textFile("input/Project2Data_USPresidents.csv")
-    rdd2.foreach(println)
-
-    println("*********TEST********************")
-
-    val states = rdd2.map(_.split(",")(2))
-
-    states.take(5) foreach(println)
-
-    val votes = rdd2.map(_.split(",")(11))
-
-    votes.take(5) foreach(println)
-
     val stateVotes = rdd2.map{x => x.split(',')}.map{x => (x(0), x(2), x(11))}
-
     val stateVotes2 = stateVotes.distinct()
-
-
     val rdd4 = stateVotes2.filter(x => (x._1 contains "2020"))
-    rdd4.foreach(println)
+    val rdd5 = rdd4.sortBy(_._2)
+    rdd5.foreach(println)
+    println("Breakdown of the vote count, state by state, during the 2020 Presidential Election" + '\n' )
+  }
 
-
-    println("*********FILTER********************")
-
-    // RDD Transformation - Filter
-
-    val filterRDD_GOP = rdd2.filter(x => !(x.contains("REPUBLICAN")))
+  // RDD
+  def run_alternative_presidential_nominees(): Unit = {
+    var rdd = _spark.sparkContext.textFile("input/Project2Data_USPresidents.csv")
+    val header = rdd.first()
+    rdd = rdd.filter(row => row != header)
+    val filterRDD_GOP = rdd.filter(x => !(x.contains("REPUBLICAN")))
     val filterRDD_DemsAndGOP = filterRDD_GOP.filter(x => !(x.contains("DEMOCRAT")))
-
-
-    println("filter test")
-
-    filterRDD_DemsAndGOP.foreach(println)
-
-
-    // RDD Transformation - Union
-    println("******UNION!!!*********")
-    val filterUnion = filterRDD_GOP.union(filterRDD_DemsAndGOP)
-
-
-
-
-    //filterUnion.foreach(println)
-
-    /*
-    // RDD Transformation - Map
-    // Percentage of total votes by state (example)
-    val numbersRDD = sc.parallelize(List(1,2,3,4))
-    val squareNumbersRDD = numbersRDD.map(x => x*x).collect()
-    println("RDD Transformation - Map")
-    squareNumbersRDD.foreach(println)
-
-     */
-
-    // RDD Transformation - Map
-    // Percentage of total votes by state (example)
-    //val rdd4 = stateVotes2.filter(x => (x._1 contains "2020"))
-
-    val votesRDD = stateVotes2.map(x => (x._3))
-    println("RDD Transformation - Map (total votes)")
-
-    votesRDD.foreach(println)
-
-
-
-    // RDD Action - Collect
-    filterRDD_DemsAndGOP.collect()
-    println("Collect action:")
-    filterRDD_DemsAndGOP.foreach(println)
-
-    // RDD Action - Count
-    println("Count action:")
-    println(filterRDD_DemsAndGOP.count())
+    val parties = filterRDD_DemsAndGOP.map{x => x.split(',')}.map{x => ( x(8), x(7), x(0))}
+    val partiesDistinct = parties.distinct()
+    val partiesSorted = partiesDistinct.sortBy(r => (r._1, r._2, r._3))
+    partiesSorted.foreach(println)
+    println('\n' + "A list of all non-Democratic and non-Republican presidential candidates from 1976 to 2020 ")
+    println("In total, " +filterRDD_DemsAndGOP.count() + " presidential candidates have ran that neither identifies as a Democrat or a Republican" + '\n' )
   }
 
   // SQL and DF Query
@@ -577,7 +526,7 @@ object HiveConnection {
     val records = party_DF.join(NY_Senator_DF, org.apache.spark.sql.functions.col("party_detailed") === org.apache.spark.sql.functions.col("Party"))
     records.createOrReplaceTempView("records")
     val final_DF = _spark.sql("SELECT SUM(candidatevotes), Party FROM records GROUP BY Party ORDER BY SUM(candidatevotes) DESC")
-    final_DF.show()
+    final_DF.show(40)
   }
   /* END PROJECT TWO QUERIES */
 }

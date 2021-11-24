@@ -5,6 +5,10 @@ object Trend {
     Connection.run_data_query(query_number)
   }
 
+  def run_2020_presidential_vote_state_breakdown(): Unit = {
+    Connection.run_2020_presidential_vote_state_breakdown()
+  }
+
   def run_alternative_presidential_nominees(): Unit = {
     Connection.run_alternative_presidential_nominees()
   }
